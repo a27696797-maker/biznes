@@ -377,6 +377,99 @@
       margin-right: 4px;
     }
 
+    /* Кнопки в демо */
+    .demo-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .demo-btn {
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .demo-btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(16,185,129,0.3);
+    }
+    .demo-btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    .demo-btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+    }
+    .demo-btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Модальное окно */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+    }
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .modal-text {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .modal-price {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 24px;
+    }
+
     /* Отчет родителя */
     .report-card {
       background: white;
@@ -461,7 +554,7 @@
       font-weight: 500;
     }
 
-    /* Преимущества */
+    /* Преимущества / Почему это меняет образование */
     .benefits-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -624,46 +717,6 @@
       color: var(--text-primary);
     }
 
-    /* Секция для инвесторов */
-    .investor-section {
-      background: var(--bg-light);
-    }
-    .investor-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 40px;
-    }
-    .investor-card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-    .investor-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-    .investor-card .icon {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-    .investor-card h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .investor-card p {
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-    }
-    .investor-highlight {
-      font-weight: 700;
-      color: var(--primary);
-    }
-
     /* Адаптивность */
     @media (max-width: 992px) {
       .grid-3 {
@@ -678,9 +731,6 @@
       }
       .pricing-card.featured {
         transform: scale(1);
-      }
-      .investor-grid {
-        grid-template-columns: repeat(2, 1fr);
       }
     }
 
@@ -701,9 +751,6 @@
         padding: 0 16px;
       }
       .grid-3, .grid-2, .benefits-grid {
-        grid-template-columns: 1fr;
-      }
-      .investor-grid {
         grid-template-columns: 1fr;
       }
       .steps-timeline {
@@ -765,7 +812,7 @@
       <a href="#" class="logo">
         <span>🎓 МатАИ</span>
       </a>
-      <a href="#cta" class="btn btn-primary">Попробовать бесплатно</a>
+      <a href="#pricing" class="btn btn-primary">Оформить подписку</a>
     </div>
   </header>
 
@@ -773,23 +820,23 @@
   <section id="hero">
     <div class="container">
       <h1 class="animate">ИИ-репетитор, который объясняет,<br>а не просто дает ответы</h1>
-      <p class="animate delay-1">Персональная подготовка к ЕГЭ/ОГЭ по математике за 5 000 ₽/мес — в 4 раза дешевле живого репетитора</p>
+      <p class="animate delay-1">Персональная подготовка к ЕГЭ/ОГЭ по математике за 5 000 ₽/мес — учим думать, а не списывать</p>
       <div class="btn-group animate delay-2">
-        <a href="#cta" class="btn btn-primary btn-large">Попробовать бесплатно</a>
-        <a href="#demo" class="btn btn-outline btn-large">Смотреть демо</a>
+        <a href="#demo" class="btn btn-primary btn-large">Попробовать демо: 10 задач бесплатно</a>
+        <a href="#pricing" class="btn btn-outline btn-large">Оформить подписку</a>
       </div>
       <div class="hero-stats animate delay-3">
         <div class="hero-stat">
-          <div class="hero-stat-value">75%</div>
-          <div class="hero-stat-label">экономии бюджета</div>
+          <div class="hero-stat-value">10</div>
+          <div class="hero-stat-label">задач в демо-режиме</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-value">+4 балла</div>
-          <div class="hero-stat-label">к ЕГЭ за месяц</div>
+          <div class="hero-stat-value">Метод Сократа</div>
+          <div class="hero-stat-label">учим думать, а не списывать</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-value">7 мес</div>
-          <div class="hero-stat-label">окупаемость инвестиций</div>
+          <div class="hero-stat-value">−75%</div>
+          <div class="hero-stat-label">экономии бюджета на репетиторов</div>
         </div>
       </div>
     </div>
@@ -822,30 +869,35 @@
     </div>
   </section>
 
-  <!-- Секция 3: Решение -->
+  <!-- Секция 3: Как это работает (5 шагов) -->
   <section id="solution">
     <div class="container">
       <h2 class="section-title">Как работает МатАИ</h2>
       <div class="steps-timeline">
         <div class="step animate">
-          <div class="step-icon">📸</div>
-          <h3>Ученик отправляет задачу</h3>
-          <p>Фото или текст</p>
+          <div class="step-icon">📝</div>
+          <h3>Выбор задачи</h3>
+          <p>Ученик выбирает задачу из демо-банка. Ввод своей задачи доступен в полной версии</p>
         </div>
         <div class="step animate delay-1">
-          <div class="step-icon">💡</div>
-          <h3>ИИ находит ошибку и объясняет</h3>
-          <p>Понятно, шаг за шагом</p>
+          <div class="step-icon">🤔</div>
+          <h3>Решение и отправка</h3>
+          <p>Ученик пытается решить и отправляет свой вариант</p>
         </div>
         <div class="step animate delay-2">
-          <div class="step-icon">📚</div>
-          <h3>Ученик тренируется на похожих задачах</h3>
-          <p>Закрепление навыка</p>
+          <div class="step-icon">💡</div>
+          <h3>Проверка логики</h3>
+          <p>ИИ проверяет ход мыслей: "Сделай так, потому что..."</p>
         </div>
         <div class="step animate delay-3">
+          <div class="step-icon">🔄</div>
+          <h3>Закрепление</h3>
+          <p>После правильного решения ИИ предлагает аналогичную задачу</p>
+        </div>
+        <div class="step animate delay-4">
           <div class="step-icon">📊</div>
-          <h3>Родитель получает отчет</h3>
-          <p>Прогресс и прогноз</p>
+          <h3>Отчет родителю</h3>
+          <p>Родитель получает отчет о попытках, логике и прогрессе</p>
         </div>
       </div>
     </div>
@@ -855,53 +907,60 @@
   <section id="demo" class="section-bg-light">
     <div class="container">
       <h2 class="section-title">Посмотрите, как это работает</h2>
-      <div class="chat-mockup animate">
-        <!-- Сообщение ученика -->
-        <div class="chat-message student">
-          <div class="chat-bubble">
-            <span class="chat-emoji">📷</span> [Ученик отправляет фото задачи]<br>
-            "Решите: Найти точку максимума функции<br>
-            y = (x² − 4x + 5) · eˣ"
-          </div>
-        </div>
-        <!-- Сообщение ИИ -->
+      <div class="demo-actions animate">
+        <button class="demo-btn demo-btn-secondary" id="btn-own-task">Ввести свою задачу</button>
+        <button class="demo-btn demo-btn-primary" id="btn-demo-tasks">Выбрать из 10 демо-задач</button>
+      </div>
+      <!-- Чат будет показан после клика по "Выбрать из 10 демо-задач" -->
+      <div class="chat-mockup animate" id="chat-container" style="display: none;">
+        <!-- Сообщение системы -->
         <div class="chat-message ai">
           <div class="chat-bubble">
-            Давай разберем эту задачу вместе! 🎯<br><br>
-            Сначала найдем производную:<br>
-            <span class="math-block">y' = (2x − 4) · eˣ + (x² − 4x + 5) · eˣ<br>y' = eˣ · (2x − 4 + x² − 4x + 5)<br>y' = eˣ · (x² − 2x + 1)<br>y' = eˣ · (x − 1)²</span><br>
-            Приравняем к нулю:<br>
-            <span class="math-block">eˣ · (x − 1)² = 0</span><br>
-            Так как eˣ > 0 всегда, то:<br>
-            <span class="math-block">(x − 1)² = 0<br>x = 1</span><br>
-            Проверим знак производной:<br>
-            - При x < 1: y' > 0 (функция растет)<br>
-            - При x > 1: y' > 0 (функция растет)<br><br>
-            ⚠️ Внимание! Производная не меняет знак в точке x = 1, значит это точка перегиба, а не экстремум!<br><br>
-            Правильный ответ: точка максимума не существует.<br><br>
-            Понятно? Хочешь разобрать похожую задачу для тренировки?
+            Задача: Решите неравенство: (x - 2) / (x + 3) > 0. Попробуй найти корни и расставить знаки.
           </div>
         </div>
         <!-- Ответ ученика -->
         <div class="chat-message student">
           <div class="chat-bubble">
-            "Да, давай!"
+            Корни 2 и -3. Ответ: x > 2
           </div>
         </div>
         <!-- Ответ ИИ -->
         <div class="chat-message ai">
           <div class="chat-bubble">
-            Отлично! Вот задача:<br>
-            <span class="math-block">Найти точку минимума функции<br>y = (x² − 6x + 10) · eˣ</span><br>
-            Попробуй решить сам, а я проверю и объясню ошибки 😉
+            Ты верно нашел корни! 👍 Но давай посмотрим на знак. Ты указал только один интервал. Помнишь метод интервалов? Мы должны проверить знак выражения на каждом из трех интервалов: (-∞; -3), (-3; 2) и (2; +∞). Давай проверим интервал (-3; 2). Подставь туда, например, число 0. Какой знак получится?
+          </div>
+        </div>
+        <!-- Ответ ученика -->
+        <div class="chat-message student">
+          <div class="chat-bubble">
+            Если подставить 0, то получится (0-2)/(0+3) = -2/3. Знак минус.
+          </div>
+        </div>
+        <!-- Ответ ИИ -->
+        <div class="chat-message ai">
+          <div class="chat-bubble">
+            Идеально! 🎯 Видишь, как все логично? Теперь, зная знаки на всех интервалах, попробуй записать окончательный ответ, учитывая, что нам нужно значение '> 0' (больше нуля).
           </div>
         </div>
       </div>
       <div style="text-align: center; margin-top: 30px;" class="animate delay-1">
-        <a href="#cta" class="btn btn-primary btn-large">Попробовать бесплатно</a>
+        <a href="#pricing" class="btn btn-primary btn-large">Оформить подписку</a>
       </div>
     </div>
   </section>
+
+  <!-- Модальное окно пейволла -->
+  <div class="modal-overlay" id="modal-paywall">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close">&times;</button>
+      <div class="modal-icon">🔒</div>
+      <div class="modal-title">Эта функция доступна в полной версии</div>
+      <div class="modal-text">Введите свою задачу и получите полный разбор логики решения.</div>
+      <div class="modal-price">5 000 ₽/мес</div>
+      <a href="#pricing" class="btn btn-primary btn-large btn-block">Оформить подписку</a>
+    </div>
+  </div>
 
   <!-- Секция 5: Отчет для родителя -->
   <section id="report">
@@ -913,16 +972,16 @@
         </div>
         <div class="report-stats">
           <div class="stat-item">
-            <div class="stat-value">42</div>
-            <div class="stat-label">Решено задач</div>
+            <div class="stat-value">3</div>
+            <div class="stat-label">Попыток решения</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value">68%</div>
-            <div class="stat-label">Правильных с первого раза</div>
+            <div class="stat-value">Высокое</div>
+            <div class="stat-label">Понимание логики</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value">3ч 20м</div>
-            <div class="stat-label">Время занятий</div>
+            <div class="stat-value">5</div>
+            <div class="stat-label">Рекомендовано задач по методу интервалов</div>
           </div>
         </div>
         <h3>Прогресс по темам</h3>
@@ -968,40 +1027,25 @@
     </div>
   </section>
 
-  <!-- Секция 6: Преимущества -->
+  <!-- Секция 6: Почему это меняет образование -->
   <section id="benefits" class="section-bg-light">
     <div class="container">
-      <h2 class="section-title">Почему родители выбирают нас</h2>
+      <h2 class="section-title">Почему это меняет образование</h2>
       <div class="benefits-grid">
         <div class="benefit-card animate">
-          <div class="benefit-icon">⏰</div>
-          <h3>Доступен 24/7</h3>
-          <p>Не нужно подстраиваться под расписание репетитора</p>
+          <div class="benefit-icon">🤔</div>
+          <h3>Метод Сократа</h3>
+          <p>ИИ задает наводящие вопросы, пока ученик сам не придет к правильному решению. Это формирует глубокое понимание, а не механическое списывание.</p>
         </div>
         <div class="benefit-card animate delay-1">
-          <div class="benefit-icon">😊</div>
-          <h3>Терпеливый и никогда не устает</h3>
-          <p>Объяснит 10 раз, если нужно</p>
+          <div class="benefit-icon">⚡</div>
+          <h3>Мгновенная обратная связь</h3>
+          <p>Ученик не ждет проверки учителя сутки. Он получает разбор своей конкретной ошибки здесь и сейчас.</p>
         </div>
         <div class="benefit-card animate delay-2">
-          <div class="benefit-icon">🧠</div>
-          <h3>Не дает списать</h3>
-          <p>Учит думать, а не просто дает ответы</p>
-        </div>
-        <div class="benefit-card animate">
-          <div class="benefit-icon">📊</div>
-          <h3>Прозрачность для родителей</h3>
-          <p>Еженедельные отчеты о прогрессе</p>
-        </div>
-        <div class="benefit-card animate delay-1">
-          <div class="benefit-icon">💸</div>
-          <h3>В 4 раза дешевле репетитора</h3>
-          <p>5 000 ₽/мес вместо 20 000 ₽</p>
-        </div>
-        <div class="benefit-card animate delay-2">
-          <div class="benefit-icon">📱</div>
-          <h3>Работает в ВКонтакте</h3>
-          <p>Не нужно скачивать отдельные приложения</p>
+          <div class="benefit-icon">🎯</div>
+          <h3>Точечная тренировка</h3>
+          <p>Система автоматически подбирает аналогичные задачи именно на те правила, в которых ученик недавно ошибся.</p>
         </div>
       </div>
     </div>
@@ -1021,7 +1065,7 @@
             <li><span class="check-icon">✓</span> Еженедельные отчеты</li>
             <li><span class="check-icon">✓</span> Отмена в любой момент</li>
           </ul>
-          <a href="#cta" class="btn btn-primary btn-block">Начать бесплатно</a>
+          <a href="#cta" class="btn btn-primary btn-block">Начать с 10 бесплатных задач</a>
         </div>
         <div class="pricing-card featured animate delay-1">
           <div class="badge-popular">Популярный выбор</div>
@@ -1036,39 +1080,18 @@
           <a href="#cta" class="btn btn-primary btn-block">Выбрать тариф</a>
         </div>
       </div>
+      <p style="text-align: center; margin-top: 30px; color: var(--text-secondary);">
+        Начните с 10 бесплатных задач в демо-режиме, чтобы оценить качество объяснений. Для доступа ко всему банку задач ЕГЭ/ОГЭ и персональному плану — оформите подписку.
+      </p>
     </div>
   </section>
 
-  <!-- Секция 8: Для инвесторов -->
-  <section id="investors" class="investor-section">
-    <div class="container">
-      <h2 class="section-title">Почему МатАИ — выгодная инвестиция</h2>
-      <div class="investor-grid">
-        <div class="investor-card animate">
-          <div class="icon">📈</div>
-          <h3>Растущий рынок</h3>
-          <p>Рынок онлайн-подготовки к ЕГЭ растет на <span class="investor-highlight">38% в год</span>. Более 2 млн выпускников ежегодно.</p>
-        </div>
-        <div class="investor-card animate delay-1">
-          <div class="icon">💰</div>
-          <h3>Экономика сходится</h3>
-          <p>LTV/CAC = <span class="investor-highlight">4.57</span>. Окупаемость затрат на клиента — 1 месяц. Полная окупаемость инвестиций — 7 месяцев.</p>
-        </div>
-        <div class="investor-card animate delay-2">
-          <div class="icon">🛡️</div>
-          <h3>Защита инвестиций</h3>
-          <p>Траншевая структура финансирования. Максимальный риск — <span class="investor-highlight">500 000 руб.</span> при полной сумме 1 500 000 руб.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Секция 9: CTA -->
+  <!-- Секция 8: CTA -->
   <section id="cta">
     <div class="container">
-      <h2 class="animate">Начните бесплатно прямо сейчас</h2>
-      <p class="animate delay-1">7 дней бесплатного доступа. Без привязки карты. Отмена в один клик.</p>
-      <a href="#" class="btn btn-primary btn-large animate delay-2">Попробовать бесплатно</a>
+      <h2 class="animate">Начните с 10 бесплатных задач</h2>
+      <p class="animate delay-1">Оцените качество объяснений. Для полного доступа оформите подписку.</p>
+      <a href="#demo" class="btn btn-primary btn-large animate delay-2">Попробовать демо</a>
       <div class="cta-note animate delay-3">Уже попробовали 500+ семей</div>
     </div>
   </section>
@@ -1087,5 +1110,33 @@
     </div>
   </footer>
 
+  <script>
+    (function() {
+      const btnOwnTask = document.getElementById('btn-own-task');
+      const btnDemoTasks = document.getElementById('btn-demo-tasks');
+      const chatContainer = document.getElementById('chat-container');
+      const modalPaywall = document.getElementById('modal-paywall');
+      const modalClose = document.getElementById('modal-close');
+
+      btnOwnTask.addEventListener('click', function() {
+        modalPaywall.classList.add('active');
+      });
+
+      modalClose.addEventListener('click', function() {
+        modalPaywall.classList.remove('active');
+      });
+
+      modalPaywall.addEventListener('click', function(e) {
+        if (e.target === modalPaywall) {
+          modalPaywall.classList.remove('active');
+        }
+      });
+
+      btnDemoTasks.addEventListener('click', function() {
+        chatContainer.style.display = 'block';
+        chatContainer.scrollIntoView({ behavior: 'smooth' });
+      });
+    })();
+  </script>
 </body>
 </html>
