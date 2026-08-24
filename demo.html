@@ -8,7 +8,735 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
+      --primary: #10b981;<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МатАИ — Интерактивное Демо</title>
+  <meta name="description" content="Попробуйте 10 бесплатных задач ЕГЭ и ОГЭ с ИИ-репетитором, который объясняет логику, а не дает готовые ответы.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
       --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #d1fae5;
+      --secondary: #3b82f6;
+      --ege-color: #8b5cf6;
+      --oge-color: #f59e0b;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --bg-light: #f9fafb;
+      --border-color: #e5e7eb;
+      --radius: 16px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* --- Анимации --- */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s cubic-bezier(0.5, 0, 0, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* --- Header --- */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo span { color: var(--primary); }
+    .btn-back {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: white;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover {
+      background: var(--bg-light);
+      color: var(--primary);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .main-container {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- Task Selection Screen (Premium Cards) --- */
+    #task-selection { text-align: center; }
+    #task-selection h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    #task-selection .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.ege { background: var(--ege-color); }
+    .legend-dot.oge { background: var(--oge-color); }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      text-align: left;
+    }
+    .task-card-img {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      cursor: pointer;
+    }
+    .task-card-img:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.15);
+      border-color: transparent;
+    }
+    .task-image-wrapper {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+    }
+    .task-image-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.95) 100%);
+    }
+    .task-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.6s ease;
+      filter: grayscale(40%);
+    }
+    .task-card-img:hover .task-image-wrapper img {
+      transform: scale(1.08);
+      filter: grayscale(0%);
+    }
+    .task-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: white;
+      z-index: 3;
+    }
+    .task-badge.ege { background: var(--ege-color); }
+    .task-badge.oge { background: var(--oge-color); }
+    .task-icon-float {
+      position: absolute;
+      bottom: -20px;
+      left: 20px;
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+      transition: transform 0.3s ease;
+    }
+    .task-card-img:hover .task-icon-float {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .task-content {
+      padding: 32px 24px 24px;
+      flex: 1;
+    }
+    .task-content h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    .task-content p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    /* --- Chat Interface --- */
+    #chat-interface {
+      display: none;
+      flex-direction: column;
+      height: calc(100vh - 100px);
+      max-height: 800px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      animation: fadeIn 0.5s ease-out;
+    }
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .chat-header .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    }
+    .chat-header .info { display: flex; flex-direction: column; flex: 1; }
+    .chat-header .name { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+    .chat-header .status { font-size: 0.8rem; color: var(--primary); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .chat-header .status::before { content: ''; width: 6px; height: 6px; background: var(--primary); border-radius: 50%; }
+    .chat-header .task-tag {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+    }
+    .chat-header .task-tag.ege { background: var(--ege-color); }
+    .chat-header .task-tag.oge { background: var(--oge-color); }
+
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #fafbfc;
+      scroll-behavior: smooth;
+    }
+    .message {
+      max-width: 85%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      animation: slideUp 0.35s ease-out;
+      word-wrap: break-word;
+    }
+    .message.ai {
+      align-self: flex-start;
+      background: white;
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    .message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+    }
+    .math-block {
+      font-family: 'Courier New', monospace;
+      background: var(--primary-light);
+      color: #064e3b;
+      padding: 12px 16px;
+      border-radius: 8px;
+      display: block;
+      margin: 12px 0;
+      font-size: 0.95em;
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .message.user .math-block {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .praise {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border-left: 4px solid var(--oge-color);
+      padding: 16px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-weight: 600;
+      color: #92400e;
+      font-size: 0.95rem;
+    }
+
+    .typing-indicator {
+      align-self: flex-start;
+      background: white;
+      padding: 16px 20px;
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      display: none;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+    .typing-indicator.active { display: flex; }
+    .typing-indicator span {
+      width: 8px; height: 8px; background: #9ca3af; border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    .choices-panel {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border-color);
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100px;
+    }
+    .choice-btn {
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      background: white;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-family: inherit;
+      box-shadow: var(--shadow-sm);
+      animation: slideUp 0.3s ease-out;
+    }
+    .choice-btn:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-md);
+    }
+    .choice-btn.final {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-color: transparent;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 16px;
+    }
+    .choice-btn.final:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 640px) {
+      .main-container { padding: 20px 16px; }
+      #task-selection h1 { font-size: 1.75rem; }
+      .task-grid { grid-template-columns: 1fr; }
+      #chat-interface { height: calc(100vh - 80px); border-radius: 0; border-left: none; border-right: none; }
+      .chat-window { padding: 16px; }
+      .message { max-width: 92%; font-size: 0.9rem; padding: 12px 16px; }
+      .choices-panel { padding: 16px; gap: 10px; }
+      .choice-btn { font-size: 0.9rem; padding: 12px 16px; }
+      .header { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="index.html" class="logo">🎓 <span>МатАИ</span> <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; margin-left: 4px;">Демо</span></a>
+    <a href="index.html" class="btn-back">← На главную</a>
+  </header>
+
+  <div class="main-container">
+    
+    <!-- Экран выбора задач -->
+    <div id="task-selection" class="reveal">
+      <h1>Выберите задачу для демо</h1>
+      <p class="subtitle">10 задач из реального банка ЕГЭ и ОГЭ. Попробуйте, как ИИ объясняет материал, не давая готовых ответов.</p>
+      
+      <div class="legend">
+        <div class="legend-item"><span class="legend-dot ege"></span> ЕГЭ (11 класс)</div>
+        <div class="legend-item"><span class="legend-dot oge"></span> ОГЭ (9 класс)</div>
+      </div>
+      
+      <div class="task-grid" id="task-grid"></div>
+    </div>
+
+    <!-- Экран чата -->
+    <div id="chat-interface">
+      <div class="chat-header">
+        <div class="avatar">🤖</div>
+        <div class="info">
+          <div class="name">ИИ-Репетитор</div>
+          <div class="status">онлайн</div>
+        </div>
+        <div class="task-tag" id="chat-task-tag"></div>
+      </div>
+      
+      <div class="chat-window" id="chat-window">
+        <div class="typing-indicator" id="typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      
+      <div class="choices-panel" id="choices-panel"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // Список задач с премиальными изображениями
+    const taskList = [
+      { id: 'intervals', icon: '📈', exam: 'ege', title: 'Метод интервалов', desc: 'Рациональные неравенства. Логика знаков.', img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80&auto=format' },
+      { id: 'derivative', icon: '📉', exam: 'ege', title: 'Производная и экстремумы', desc: 'Поиск точек минимума и максимума функции.', img: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&q=80&auto=format' },
+      { id: 'probability', icon: '🎲', exam: 'ege', title: 'Теория вероятностей', desc: 'Задача с ловушкой "без возвращения".', img: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=800&q=80&auto=format' },
+      { id: 'logarithm', icon: '🔢', exam: 'ege', title: 'Логарифмическое уравнение', desc: 'Применяем свойства логарифмов и ОДЗ.', img: 'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?w=800&q=80&auto=format' },
+      { id: 'cylinder', icon: '🧊', exam: 'ege', title: 'Стереометрия: объём цилиндра', desc: 'Работа с формулой и размерами.', img: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&q=80&auto=format' },
+      { id: 'percent', icon: '💰', exam: 'ege', title: 'Текстовая задача на проценты', desc: 'Составляем уравнение по условию.', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80&auto=format' },
+      { id: 'linear', icon: '✏️', exam: 'oge', title: 'Линейное уравнение', desc: 'Раскрываем скобки и переносим слагаемые.', img: 'https://images.unsplash.com/photo-1596495577866-25b1b482062d?w=800&q=80&auto=format' },
+      { id: 'pythagoras', icon: '📐', exam: 'oge', title: 'Теорема Пифагора', desc: 'Находим сторону прямоугольного треугольника.', img: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=800&q=80&auto=format' },
+      { id: 'quadratic_ineq', icon: '📊', exam: 'oge', title: 'Квадратное неравенство', desc: 'Корни и метод интервалов.', img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80&auto=format' },
+      { id: 'simple_probability', icon: '🎯', exam: 'oge', title: 'Простая вероятность', desc: 'Классическая формула вероятности.', img: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?w=800&q=80&auto=format' }
+    ];
+
+    // Сценарии диалогов (полный набор из 10 задач)
+    const scenarios = {
+      intervals: {
+        exam: 'ege', start: 'i1',
+        steps: {
+          i1: { sender: 'ai', text: 'Решим неравенство: <span class="math-block">(x − 2) / (x + 3) > 0</span>Первый шаг: найди корни числителя и знаменателя. Приравняй каждую скобку к нулю. Какие корни получились?', choices: [{ text: 'Корни: 2 и −3', next: 'i2' }, { text: 'Не помню, как находить', next: 'i1_hint' }] },
+          i1_hint: { sender: 'ai', text: 'Ничего страшного, давай вспомним! 🔍 Чтобы найти корень выражения, нужно приравнять его к нулю:<br><span class="math-block">x − 2 = 0  →  x = 2<br>x + 3 = 0  →  x = −3</span>Теперь попробуй ответить на вопрос ещё раз.', choices: [{ text: 'Корни: 2 и −3', next: 'i2' }] },
+          i2: { sender: 'ai', text: 'Отлично! 👍 Корни разбили числовую прямую на три интервала: (−∞; −3), (−3; 2) и (2; +∞). Теперь проверим знак на среднем интервале (−3; 2). Подставь туда пробное число, например, 0. Какой знак получится?', choices: [{ text: 'Получилось −2/3, знак минус', next: 'i3' }, { text: 'Получился плюс', next: 'i2_hint' }] },
+          i2_hint: { sender: 'ai', text: 'Давай посчитаем вместе 🧮 Подставим x = 0:<br><span class="math-block">(0 − 2) / (0 + 3) = −2 / 3</span>Минус делим на плюс — получается...?', choices: [{ text: 'Минус (−2/3)', next: 'i3' }] },
+          i3: { sender: 'ai', text: 'Идеально! 🎯 Значит, на интервале (−3; 2) выражение отрицательное. Аналогично можно проверить, что на крайних интервалах — положительное. А нам нужно <b>"> 0"</b> (больше нуля). Какой будет окончательный ответ?', choices: [{ text: 'x ∈ (−∞; −3) ∪ (2; +∞)', next: 'i_final' }, { text: 'x ∈ (−3; 2)', next: 'i3_hint' }] },
+          i3_hint: { sender: 'ai', text: 'Почти! Но обрати внимание: мы ищем, где выражение <b>больше нуля</b> (положительное). А на интервале (−3; 2) мы только что выяснили, что оно отрицательное. Значит, ответ — это крайние интервалы, где знак "плюс".', choices: [{ text: 'x ∈ (−∞; −3) ∪ (2; +∞)', next: 'i_final' }] },
+          i_final: { sender: 'ai', text: '<div class="praise">🏆 Блестяще! Ты сам пришёл к правильному ответу!</div>Ты отлично освоил <b>метод интервалов</b> — понял логику, а не просто заучил правило. Именно так мы учим думать, а не списывать.<br><br>В полной версии МатАИ я бы сразу дал тебе 3 похожие задачи для закрепления этого навыка!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      derivative: {
+        exam: 'ege', start: 'd1',
+        steps: {
+          d1: { sender: 'ai', text: 'Найдём точку минимума функции: <span class="math-block">y = x² − 4x + 5</span>С чего начнём исследование функции?', choices: [{ text: 'Найдём производную функции', next: 'd2' }, { text: 'Подставим x = 0', next: 'd1_hint' }] },
+          d1_hint: { sender: 'ai', text: 'Подстановка x = 0 даст нам значение функции в одной точке (y = 5), но не скажет, является ли эта точка минимумом. 🔍 Чтобы найти экстремум, нужно использовать <b>производную</b> — она показывает, где функция растёт, а где убывает.', choices: [{ text: 'Понятно, найдём производную', next: 'd2' }] },
+          d2: { sender: 'ai', text: 'Верно! 👍 Считаем производную:<br><span class="math-block">y\' = 2x − 4</span>Чтобы найти критическую точку, мы должны приравнять производную к чему?', choices: [{ text: 'Приравнять к нулю (y\' = 0)', next: 'd3' }, { text: 'Приравнять к исходной функции', next: 'd2_hint' }] },
+          d2_hint: { sender: 'ai', text: 'Нет, так не получится 🤔 Смысл критической точки в том, что в ней производная <b>равна нулю</b> — именно в этих точках функция может менять направление.', choices: [{ text: 'Приравнять к нулю (y\' = 0)', next: 'd3' }] },
+          d3: { sender: 'ai', text: 'Точно! 🎯 Решаем уравнение:<br><span class="math-block">2x − 4 = 0<br>2x = 4<br>x = 2</span>Получили критическую точку x = 2. Но как нам убедиться, что это именно <b>минимум</b>, а не максимум?', choices: [{ text: 'Производная меняет знак с минуса на плюс', next: 'd_final' }, { text: 'Производная меняет знак с плюса на минус', next: 'd3_hint' }] },
+          d3_hint: { sender: 'ai', text: 'Почти наоборот! 📉📈 Представь яму: перед ней ты спускаешься (−), потом поднимаешься (+). А горка (максимум) — наоборот: сначала подъём (+), потом спуск (−). Значит, в точке минимума производная меняет знак с минуса на плюс.', choices: [{ text: 'Понятно! С минуса на плюс', next: 'd_final' }] },
+          d_final: { sender: 'ai', text: '<div class="praise">🏆 Абсолютно верно! Ты отлично усвоил алгоритм!</div>Проверим: при x < 2 производная y\' = 2x − 4 < 0 (функция убывает), а при x > 2 производная y\' > 0 (функция возрастает). Значит, в точке x = 2 — действительно <b>минимум</b>.<br><br>Так шаг за шагом мы разберём любую сложную задачу из ЕГЭ!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      probability: {
+        exam: 'ege', start: 'p1',
+        steps: {
+          p1: { sender: 'ai', text: 'В мешке 3 белых и 2 чёрных шара (всего 5 шаров). Мы достаём 2 шара <b>подряд, без возвращения</b>. Какова вероятность того, что оба шара белые?', choices: [{ text: '3/5 × 3/5 = 9/25', next: 'p1_hint' }, { text: '3/5 × 2/4 = 6/20', next: 'p2' }] },
+          p1_hint: { sender: 'ai', text: 'Ты посчитал так, будто шары <b>возвращаются</b> обратно в мешок. Но в условии сказано: "без возвращения". 🎯 Это значит, что после вытаскивания первого белого шара количество шаров меняется!', choices: [{ text: 'Понятно, пересчитаю', next: 'p1_retry' }] },
+          p1_retry: { sender: 'ai', text: 'Давай подумаем вместе: 🧮<br>• Вероятность вытащить <b>первый</b> белый шар: 3 белых из 5 = 3/5<br>• После этого в мешке осталось 4 шара, из них 2 белых.<br>• Вероятность вытащить <b>второй</b> белый шар: 2/4.<br><br>А как объединить два последовательных события?', choices: [{ text: 'Перемножить: 3/5 × 2/4', next: 'p2' }] },
+          p2: { sender: 'ai', text: 'Отличный ход! 👏 Ты учёл, что после вытаскивания первого белого шара белых осталось 2, а всего шаров стало 4. Давай посчитаем:<br><span class="math-block">3/5 × 2/4 = 6/20</span>Можно ли эту дробь сократить?', choices: [{ text: 'Да, получится 3/10', next: 'p_final' }, { text: 'Нет, это окончательный ответ', next: 'p2_hint' }] },
+          p2_hint: { sender: 'ai', text: 'Дробь 6/20 можно упростить! 🔍 И числитель (6), и знаменатель (20) делятся на 2:<br><span class="math-block">6 ÷ 2 = 3<br>20 ÷ 2 = 10<br>Итого: 3/10</span>', choices: [{ text: 'Точно, 3/10', next: 'p_final' }] },
+          p_final: { sender: 'ai', text: '<div class="praise">🏆 Именно так! 3/10 или 0.3 (30%)</div>Ты блестяще справился с задачей на <b>вероятность без возвращения</b>. Это частая ловушка в ЕГЭ — многие забывают пересчитывать количество шаров. Но ты её избежал!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      logarithm: {
+        exam: 'ege', start: 'l1',
+        steps: {
+          l1: { sender: 'ai', text: 'Решим уравнение: <span class="math-block">log₂(x − 1) = 3</span>Первым делом запишем <b>ОДЗ</b> (область допустимых значений). При каком условии логарифм существует?', choices: [{ text: 'x − 1 > 0, то есть x > 1', next: 'l2' }, { text: 'x − 1 ≥ 0, то есть x ≥ 1', next: 'l1_hint' }] },
+          l1_hint: { sender: 'ai', text: 'Почти, но обрати внимание! 🎯 Логарифм определён только при <b>строго положительном</b> аргументе. Если x − 1 = 0, то log₂(0) не существует. Поэтому условие — строгое неравенство: x − 1 > 0.', choices: [{ text: 'Понятно, x > 1', next: 'l2' }] },
+          l2: { sender: 'ai', text: 'Верно! 👍 ОДЗ: x > 1. Теперь вспомним определение логарифма: <b>log₂(a) = b</b> означает, что <b>2ᵇ = a</b>. Применим это к нашему уравнению.', choices: [{ text: '2³ = x − 1', next: 'l3' }, { text: 'x − 1 = log₂(3)', next: 'l2_hint' }] },
+          l2_hint: { sender: 'ai', text: 'Нет, ты перепутал местами 🤔 Вспомни определение: log₂(a) = b ⇔ 2ᵇ = a. То есть основание (2) возводится в степень ответа (3), и это равно аргументу (x − 1).', choices: [{ text: 'Понятно! 2³ = x − 1', next: 'l3' }] },
+          l3: { sender: 'ai', text: 'Точно! 🎯 Решаем:<br><span class="math-block">2³ = x − 1<br>8 = x − 1<br>x = 9</span>Проверим ОДЗ: 9 > 1 ✓. Ответ подходит!<br>Но давай сделаем проверку — подставим x = 9 в исходное уравнение. Что получится?', choices: [{ text: 'log₂(9 − 1) = log₂(8) = 3 ✓', next: 'l_final' }, { text: 'log₂(8) = 2', next: 'l3_hint' }] },
+          l3_hint: { sender: 'ai', text: 'Давай пересчитаем 🧮 log₂(8) — это степень, в которую нужно возвести 2, чтобы получить 8:<br><span class="math-block">2¹ = 2<br>2² = 4<br>2³ = 8 ✓</span>Значит, log₂(8) = 3.', choices: [{ text: 'Точно, log₂(8) = 3 ✓', next: 'l_final' }] },
+          l_final: { sender: 'ai', text: '<div class="praise">🏆 Великолепно! Ответ: x = 9</div>Ты отлично справился с логарифмическим уравнением! Обрати внимание на важный навык: <b>всегда проверяй ОДЗ</b> — это частая причина потери баллов на ЕГЭ. Ты не забыл про это!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      cylinder: {
+        exam: 'ege', start: 'c1',
+        steps: {
+          c1: { sender: 'ai', text: 'Найдём объём цилиндра, если его <b>диаметр</b> равен 10 см, а <b>высота</b> — 4 см. С чего начнём?', choices: [{ text: 'Вспомним формулу объёма цилиндра', next: 'c2' }, { text: 'Сразу подставим 10 и 4', next: 'c1_hint' }] },
+          c1_hint: { sender: 'ai', text: 'Не спеши! ⚠️ В задаче дан <b>диаметр</b>, а в формуле объёма используется <b>радиус</b>. Если сразу подставить 10, ответ будет в 4 раза больше правильного. Давай начнём с формулы.', choices: [{ text: 'Понятно, вспомним формулу', next: 'c2' }] },
+          c2: { sender: 'ai', text: 'Верно! 👍 Формула объёма цилиндра:<br><span class="math-block">V = π · r² · h</span>где r — радиус, h — высота. В задаче дан диаметр = 10 см. Как найти радиус?', choices: [{ text: 'Радиус = диаметр / 2 = 5 см', next: 'c3' }, { text: 'Радиус = диаметр = 10 см', next: 'c2_hint' }] },
+          c2_hint: { sender: 'ai', text: 'Нет! 🤔 Радиус — это половина диаметра. Представь круг: диаметр проходит через весь круг, а радиус — только до центра.', choices: [{ text: 'Понятно, r = 5 см', next: 'c3' }] },
+          c3: { sender: 'ai', text: 'Точно! 🎯 Теперь подставим в формулу:<br><span class="math-block">V = π · 5² · 4<br>V = π · 25 · 4<br>V = 100π</span>Чему это равно примерно (если π ≈ 3,14)?', choices: [{ text: '314 см³', next: 'c_final' }, { text: '628 см³', next: 'c3_hint' }] },
+          c3_hint: { sender: 'ai', text: 'Ты, наверное, умножил на 2 лишнего раза 🧮 Давай пересчитаем:<br><span class="math-block">100 × 3,14 = 314</span>', choices: [{ text: 'Точно, 314 см³', next: 'c_final' }] },
+          c_final: { sender: 'ai', text: '<div class="praise">🏆 Отлично! Ответ: V = 100π ≈ 314 см³</div>Ты не попался в ловушку с диаметром — это частая ошибка на ЕГЭ по стереометрии. Запомни: <b>всегда проверяй, что дано — радиус или диаметр</b>!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      percent: {
+        exam: 'ege', start: 'pr1',
+        steps: {
+          pr1: { sender: 'ai', text: 'Цена товара сначала выросла на <b>20%</b>, а потом снизилась на <b>20%</b>. Как изменилась итоговая цена по сравнению с первоначальной?', choices: [{ text: 'Не изменилась', next: 'pr1_hint' }, { text: 'Уменьшилась на 4%', next: 'pr2' }] },
+          pr1_hint: { sender: 'ai', text: 'Это самая частая ошибка! 🎯 Проценты считаются не от одной и той же суммы. После повышения цена стала больше, и 20% снижения считаются уже от <b>большей</b> суммы. Давай разберём на примере.', choices: [{ text: 'Понятно, разберём на примере', next: 'pr2' }] },
+          pr2: { sender: 'ai', text: 'Пусть начальная цена = 100 ₽. После повышения на 20%:<br><span class="math-block">100 + 20% от 100 = 100 + 20 = 120 ₽</span>Теперь снизим на 20%, но уже от <b>120 ₽</b>. Сколько будет 20% от 120?', choices: [{ text: '24 ₽', next: 'pr3' }, { text: '20 ₽', next: 'pr2_hint' }] },
+          pr2_hint: { sender: 'ai', text: 'Нет! 🧮 Вспомни: 20% = 0,2. Значит:<br><span class="math-block">120 × 0,2 = 24 ₽</span>', choices: [{ text: 'Точно, 24 ₽', next: 'pr3' }] },
+          pr3: { sender: 'ai', text: 'Верно! 👍 Теперь вычтем из 120 ₽:<br><span class="math-block">120 − 24 = 96 ₽</span>Итоговая цена 96 ₽. А была 100 ₽. На сколько процентов цена уменьшилась?', choices: [{ text: 'На 4%', next: 'pr_final' }, { text: 'На 24%', next: 'pr3_hint' }] },
+          pr3_hint: { sender: 'ai', text: '24 ₽ — это сумма снижения, а не процент. 🎯 Нас интересует, какую долю 24 составляют от <b>начальной</b> цены (100 ₽):<br><span class="math-block">24 / 100 = 0,24 = 24%...<br>Стоп! А от какой цены считаем?</span><br>Мы сравниваем с <b>начальной</b> ценой 100 ₽. Значит снижение: (100 − 96) / 100 = 4/100 = 4%.', choices: [{ text: 'Понятно, на 4%', next: 'pr_final' }] },
+          pr_final: { sender: 'ai', text: '<div class="praise">🏆 Великолепно! Цена уменьшилась на 4%</div>Это классическая ловушка ЕГЭ! Запомни правило: <b>повысить на X% и понизить на X% — это не одно и то же, что не менять цену</b>. Всегда считай последовательно!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      linear: {
+        exam: 'oge', start: 'ln1',
+        steps: {
+          ln1: { sender: 'ai', text: 'Решим уравнение: <span class="math-block">3(x − 2) + 5 = 2x + 1</span>Первый шаг: раскроем скобки. Что получится слева?', choices: [{ text: '3x − 6 + 5', next: 'ln2' }, { text: '3x − 2 + 5', next: 'ln1_hint' }] },
+          ln1_hint: { sender: 'ai', text: 'Будь внимательнее! 🎯 Когда умножаем скобку на число, нужно умножить <b>каждое</b> слагаемое:<br><span class="math-block">3 · (x − 2) = 3·x − 3·2 = 3x − 6</span>', choices: [{ text: 'Понятно, 3x − 6 + 5', next: 'ln2' }] },
+          ln2: { sender: 'ai', text: 'Верно! 👍 Упростим левую часть:<br><span class="math-block">3x − 6 + 5 = 3x − 1</span>Теперь уравнение выглядит так: <b>3x − 1 = 2x + 1</b>. Перенесём все x влево, а числа вправо. Что получится?', choices: [{ text: '3x − 2x = 1 + 1', next: 'ln3' }, { text: '3x + 2x = 1 − 1', next: 'ln2_hint' }] },
+          ln2_hint: { sender: 'ai', text: 'Нет! 🤔 При переносе через знак "=" меняется знак слагаемого:<br>• 2x переносим справа налево → становится <b>−2x</b><br>• −1 переносим слева направо → становится <b>+1</b>', choices: [{ text: 'Понятно, 3x − 2x = 1 + 1', next: 'ln3' }] },
+          ln3: { sender: 'ai', text: 'Точно! 🎯 Упрощаем:<br><span class="math-block">x = 2</span>Давай проверим — подставим x = 2 в исходное уравнение. Совпадут ли левая и правая части?', choices: [{ text: '3(0) + 5 = 5 и 4 + 1 = 5 ✓', next: 'ln_final' }, { text: '3(2) + 5 = 11 и 4 + 1 = 5 ✗', next: 'ln3_hint' }] },
+          ln3_hint: { sender: 'ai', text: 'Ты подставил x = 2, но в левой части посчитал 3·(2) = 6, а должно быть 3·(2 − 2) = 3·0 = 0. 🧮 Давай аккуратно:<br><span class="math-block">Левая: 3(2 − 2) + 5 = 3·0 + 5 = 5<br>Правая: 2·2 + 1 = 5</span>5 = 5 ✓', choices: [{ text: 'Точно, 5 = 5 ✓', next: 'ln_final' }] },
+          ln_final: { sender: 'ai', text: '<div class="praise">🏆 Отлично! Ответ: x = 2</div>Ты освоил важный алгоритм решения линейных уравнений: <b>раскрыть скобки → перенести → упростить → проверить</b>. Этот навык — основа для всех остальных уравнений в ОГЭ!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      pythagoras: {
+        exam: 'oge', start: 'py1',
+        steps: {
+          py1: { sender: 'ai', text: 'В прямоугольном треугольнике катеты равны 6 см и 8 см. Найдём <b>гипотенузу</b>. Какую формулу применим?', choices: [{ text: 'Теорема Пифагора: c² = a² + b²', next: 'py2' }, { text: 'c = a + b', next: 'py1_hint' }] },
+          py1_hint: { sender: 'ai', text: 'Нет! 🤔 Сложение сторон не даст правильного ответа. В прямоугольном треугольнике работает <b>теорема Пифагора</b>: квадрат гипотенузы равен сумме квадратов катетов.', choices: [{ text: 'Понятно, c² = a² + b²', next: 'py2' }] },
+          py2: { sender: 'ai', text: 'Верно! 👍 Подставим наши значения:<br><span class="math-block">c² = 6² + 8²<br>c² = 36 + 64<br>c² = 100</span>Чему равен c?', choices: [{ text: 'c = √100 = 10 см', next: 'py_final' }, { text: 'c = 50 см', next: 'py2_hint' }] },
+          py2_hint: { sender: 'ai', text: 'Ты нашёл c² = 100, но забыл извлечь квадратный корень! 🎯 Если c² = 100, то c = √100. Какое число в квадрате даёт 100?', choices: [{ text: '10, потому что 10² = 100', next: 'py_final' }] },
+          py_final: { sender: 'ai', text: '<div class="praise">🏆 Молодец! Ответ: гипотенуза = 10 см</div>Кстати, треугольник со сторонами 6, 8, 10 — это знаменитый <b>"египетский треугольник"</b> (пропорционален 3-4-5). Запомни его — он часто встречается в задачах ОГЭ и ЕГЭ!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      quadratic_ineq: {
+        exam: 'oge', start: 'q1',
+        steps: {
+          q1: { sender: 'ai', text: 'Решим неравенство: <span class="math-block">x² − 5x + 6 < 0</span>Первый шаг: найдём корни уравнения x² − 5x + 6 = 0. По теореме Виета, какие корни?', choices: [{ text: 'x₁ = 2, x₂ = 3', next: 'q2' }, { text: 'x₁ = −2, x₂ = −3', next: 'q1_hint' }] },
+          q1_hint: { sender: 'ai', text: 'Почти, но не совсем 🤔 По теореме Виета:<br>• Сумма корней = 5 (коэффициент при x с обратным знаком)<br>• Произведение корней = 6 (свободный член)<br><span class="math-block">2 + 3 = 5 ✓<br>2 · 3 = 6 ✓</span>Знаки должны быть положительными!', choices: [{ text: 'Понятно, x₁ = 2, x₂ = 3', next: 'q2' }] },
+          q2: { sender: 'ai', text: 'Отлично! 👍 Корни x = 2 и x = 3 разбили числовую прямую на три интервала. Вспомним, что ветви параболы направлены <b>вверх</b> (коэффициент при x² положительный). Как ведёт себя парабола между корнями?', choices: [{ text: 'Парабола ниже оси x (y < 0)', next: 'q3' }, { text: 'Парабола выше оси x (y > 0)', next: 'q2_hint' }] },
+          q2_hint: { sender: 'ai', text: 'Подумай ещё раз 🎯 Парабола с ветвями вверх пересекает ось x в точках x = 2 и x = 3. Между этими точками она находится <b>ниже</b> оси x. Проверим: подставим x = 2,5 (между корнями):<br><span class="math-block">2,5² − 5·2,5 + 6 = 6,25 − 12,5 + 6 = −0,25 < 0</span>', choices: [{ text: 'Понятно, между корнями y < 0', next: 'q3' }] },
+          q3: { sender: 'ai', text: 'Верно! 🎯 Нам нужно, чтобы y < 0 (неравенство строгое "< 0"). Значит, подходят только значения x <b>между корнями</b>. Какой ответ?', choices: [{ text: 'x ∈ (2; 3)', next: 'q_final' }, { text: 'x ∈ (−∞; 2) ∪ (3; +∞)', next: 'q3_hint' }] },
+          q3_hint: { sender: 'ai', text: 'Это было бы верно для неравенства "> 0". Но у нас "< 0" — значит, нужны значения, где парабола <b>ниже</b> оси x, то есть между корнями.', choices: [{ text: 'Понятно, x ∈ (2; 3)', next: 'q_final' }] },
+          q_final: { sender: 'ai', text: '<div class="praise">🏆 Блестяще! Ответ: x ∈ (2; 3)</div>Ты освоил решение квадратных неравенств через анализ параболы! Это очень полезный навык — он работает для любых квадратных неравенств в ОГЭ и ЕГЭ.', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      },
+      simple_probability: {
+        exam: 'oge', start: 'sp1',
+        steps: {
+          sp1: { sender: 'ai', text: 'В коробке 12 красных и 8 синих карандашей. Наугад вытаскивают один карандаш. Какова вероятность, что он <b>синий</b>?', choices: [{ text: '8/20 = 0,4', next: 'sp2' }, { text: '12/20 = 0,6', next: 'sp1_hint' }] },
+          sp1_hint: { sender: 'ai', text: 'Ты посчитал вероятность <b>красного</b> карандаша 🎯 А нам нужен <b>синий</b>. В коробке 8 синих карандашей из 20 общих.', choices: [{ text: 'Понятно, 8/20', next: 'sp2' }] },
+          sp2: { sender: 'ai', text: 'Верно! 👍 Формула классической вероятности:<br><span class="math-block">P = число благоприятных / число всех<br>P = 8 / 20</span>Можно ли эту дробь сократить?', choices: [{ text: 'Да, 2/5 = 0,4', next: 'sp_final' }, { text: 'Нет, 8/20 — окончательный ответ', next: 'sp2_hint' }] },
+          sp2_hint: { sender: 'ai', text: 'Можно! 🔍 Числитель и знаменатель делятся на 4:<br><span class="math-block">8 ÷ 4 = 2<br>20 ÷ 4 = 5<br>Итого: 2/5 = 0,4</span>', choices: [{ text: 'Точно, 2/5 = 0,4', next: 'sp_final' }] },
+          sp_final: { sender: 'ai', text: '<div class="praise">🏆 Отлично! Ответ: P = 0,4 (или 40%)</div>Ты освоил базовую формулу вероятности. Запомни: <b>внимательно читай условие</b> — в задачах часто спрашивают не то, что ты посчитал первым делом!', choices: [{ text: '🔄 Вернуться к выбору задач', next: 'RESET' }] }
+        }
+      }
+    };
+
+    let currentScenarioKey = null;
+    let currentStepId = null;
+
+    // Рендер карточек задач
+    function renderTaskCards() {
+      const grid = document.getElementById('task-grid');
+      grid.innerHTML = '';
+      taskList.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'task-card-img reveal';
+        card.onclick = () => startDemo(task.id);
+        card.innerHTML = `
+          <span class="task-badge ${task.exam}">${task.exam === 'ege' ? 'ЕГЭ' : 'ОГЭ'}</span>
+          <div class="task-image-wrapper">
+            <img src="${task.img}" alt="${task.title}" loading="lazy">
+            <div class="task-icon-float">${task.icon}</div>
+          </div>
+          <div class="task-content">
+            <h3>${task.title}</h3>
+            <p>${task.desc}</p>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      
+      // Запуск анимации для карточек
+      setTimeout(() => {
+        document.querySelectorAll('.task-card-img').forEach((el, i) => {
+          setTimeout(() => el.classList.add('active'), i * 100);
+        });
+      }, 100);
+    }
+
+    function startDemo(scenarioKey) {
+      currentScenarioKey = scenarioKey;
+      currentStepId = scenarios[scenarioKey].start;
+      
+      const taskTag = document.getElementById('chat-task-tag');
+      const exam = scenarios[scenarioKey].exam;
+      taskTag.className = `task-tag ${exam}`;
+      taskTag.textContent = exam === 'ege' ? 'ЕГЭ' : 'ОГЭ';
+      
+      document.getElementById('task-selection').style.display = 'none';
+      document.getElementById('chat-interface').style.display = 'flex';
+      document.getElementById('chat-window').innerHTML = '<div class="typing-indicator" id="typing"><span></span><span></span><span></span></div>';
+      renderStep(currentStepId);
+    }
+
+    function renderStep(stepId) {
+      const scenario = scenarios[currentScenarioKey];
+      const step = scenario.steps[stepId];
+      if (!step) return;
+      
+      currentStepId = stepId;
+      const typing = document.getElementById('typing');
+      typing.classList.add('active');
+      scrollChat();
+      
+      setTimeout(() => {
+        typing.classList.remove('active');
+        addMessage(step.text, step.sender);
+        renderChoices(step.choices);
+      }, 1100);
+    }
+
+    function addMessage(text, sender) {
+      const chatWindow = document.getElementById('chat-window');
+      const typing = document.getElementById('typing');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+      msgDiv.innerHTML = text;
+      chatWindow.insertBefore(msgDiv, typing);
+      scrollChat();
+    }
+
+    function renderChoices(choices) {
+      const panel = document.getElementById('choices-panel');
+      panel.innerHTML = '';
+      if (!choices || choices.length === 0) return;
+      
+      choices.forEach((choice, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        if (choice.next === 'RESET') btn.className = 'choice-btn final';
+        btn.textContent = choice.text;
+        btn.style.animationDelay = (index * 0.08) + 's';
+        btn.onclick = () => handleChoice(choice);
+        panel.appendChild(btn);
+      });
+    }
+
+    function handleChoice(choice) {
+      addMessage(choice.text, 'user');
+      document.getElementById('choices-panel').innerHTML = '';
+      
+      if (choice.next === 'RESET') {
+        setTimeout(() => {
+          document.getElementById('chat-interface').style.display = 'none';
+          document.getElementById('task-selection').style.display = 'block';
+          currentScenarioKey = null;
+          currentStepId = null;
+        }, 600);
+        return;
+      }
+      
+      setTimeout(() => renderStep(choice.next), 500);
+    }
+
+    function scrollChat() {
+      const chatWindow = document.getElementById('chat-window');
+      setTimeout(() => {
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }, 50);
+    }
+
+    // Инициализация
+    renderTaskCards();
+  </script>
+</body>
+</html>
       --primary-dark: #059669;
       --primary-light: #d1fae5;
       --secondary: #3b82f6;
