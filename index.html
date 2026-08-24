@@ -22,7 +22,6 @@
       --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.3);
       --radius: 16px;
       --radius-sm: 8px;
     }
@@ -343,16 +342,91 @@
     .progress-track { height: 12px; background: #e5e7eb; border-radius: 6px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #34d399); border-radius: 6px; width: 0; transition: width 1.5s ease-out; }
 
-    /* --- Benefits --- */
-    .benefits-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    /* --- Benefits (Обновленный дизайн с картинками) --- */
+    .benefits-section {
+      position: relative;
+      overflow: hidden;
+      padding: 120px 0;
     }
-    .benefit-card {
-      background: white; padding: 32px; border-radius: var(--radius);
-      border: 1px solid var(--border-color); transition: 0.3s;
+    .benefits-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(circle at 10% 30%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 90% 70%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+      pointer-events: none;
     }
-    .benefit-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
-    .benefit-icon { font-size: 2.5rem; margin-bottom: 20px; }
+    .benefit-card-img {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .benefit-card-img:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+      border-color: transparent;
+    }
+    .benefit-image-wrapper {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .benefit-image-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.95) 100%);
+    }
+    .benefit-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .benefit-card-img:hover .benefit-image-wrapper img {
+      transform: scale(1.08);
+    }
+    .benefit-icon-float {
+      position: absolute;
+      bottom: -24px;
+      left: 24px;
+      width: 56px;
+      height: 56px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+      transition: transform 0.3s ease;
+    }
+    .benefit-card-img:hover .benefit-icon-float {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .benefit-content {
+      padding: 40px 28px 28px;
+      flex: 1;
+    }
+    .benefit-content h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .benefit-content p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
 
     /* --- Pricing --- */
     .pricing-grid {
@@ -478,8 +552,8 @@
               <p>Окупаемость</p>
             </div>
             <div class="stat-item">
-              <h4>2 600 ₽</h4>
-              <p>Маржа с клиента</p>
+              <h4>−75%</h4>
+              <p>Экономия бюджета</p>
             </div>
           </div>
         </div>
@@ -661,28 +735,51 @@
     </div>
   </section>
 
-  <!-- Benefits -->
-  <section class="bg-light">
+  <!-- Benefits (Обновленный блок с изображениями) -->
+  <section class="bg-light benefits-section">
     <div class="container">
       <div class="section-header reveal">
         <h2>Почему это меняет <span class="text-gradient">образование</span></h2>
+        <p>Три принципа, которые делают обучение в МатАИ эффективным, доступным и персонализированным</p>
       </div>
       <div class="benefits-grid">
-        <div class="benefit-card reveal delay-1">
-          <div class="benefit-icon">🧠</div>
-          <h3>Метод Сократа</h3>
-          <p>ИИ задает наводящие вопросы, пока ученик сам не придет к правильному решению. Это формирует глубокое понимание, а не механическое списывание.</p>
+        
+        <!-- Карточка 1: Метод Сократа -->
+        <div class="benefit-card-img reveal delay-1">
+          <div class="benefit-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80&auto=format" alt="Обучение и мышление" loading="lazy">
+            <div class="benefit-icon-float">🧠</div>
+          </div>
+          <div class="benefit-content">
+            <h3>Метод Сократа</h3>
+            <p>ИИ задает наводящие вопросы, пока ученик сам не придет к правильному решению. Это формирует глубокое понимание, а не механическое списывание.</p>
+          </div>
         </div>
-        <div class="benefit-card reveal delay-2">
-          <div class="benefit-icon">⚡</div>
-          <h3>Мгновенная обратная связь</h3>
-          <p>Ученик не ждет проверки учителя сутки. Он получает разбор своей конкретной ошибки здесь и сейчас, пока мысль еще свежа.</p>
+
+        <!-- Карточка 2: Мгновенная обратная связь -->
+        <div class="benefit-card-img reveal delay-2">
+          <div class="benefit-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80&auto=format" alt="Технологии и скорость" loading="lazy">
+            <div class="benefit-icon-float">⚡</div>
+          </div>
+          <div class="benefit-content">
+            <h3>Мгновенная обратная связь</h3>
+            <p>Ученик не ждет проверки учителя сутки. Он получает разбор своей конкретной ошибки здесь и сейчас, пока мысль еще свежа.</p>
+          </div>
         </div>
-        <div class="benefit-card reveal delay-3">
-          <div class="benefit-icon">🎯</div>
-          <h3>Точечная тренировка</h3>
-          <p>Система автоматически подбирает аналогичные задачи именно на те правила, в которых ученик недавно ошибся, закрепляя успех.</p>
+
+        <!-- Карточка 3: Точечная тренировка -->
+        <div class="benefit-card-img reveal delay-3">
+          <div class="benefit-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80&auto=format" alt="Фокус и концентрация" loading="lazy">
+            <div class="benefit-icon-float">🎯</div>
+          </div>
+          <div class="benefit-content">
+            <h3>Точечная тренировка</h3>
+            <p>Система автоматически подбирает аналогичные задачи именно на те правила, в которых ученик недавно ошибся, закрепляя успех.</p>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -787,9 +884,6 @@
     // Modal Logic
     const modal = document.getElementById('modal-paywall');
     const closeBtn = document.getElementById('modal-close');
-    
-    // Simulate "Enter own task" button click (if you add it back later)
-    // For now, it's just a structural placeholder if needed
     
     closeBtn.addEventListener('click', () => modal.classList.remove('active'));
     modal.addEventListener('click', (e) => {
