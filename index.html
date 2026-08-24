@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МатАИ — ИИ-репетитор по математике</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --secondary: #3b82f6;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-light: #f9fafb;
+      --border-color: #e5e7eb;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --shadow-sm: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-md: 0 10px 15px rgba(0,0,0,0.1);
+      --radius: 16px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ffffff;
+      color: var(--text-primary);
+      font-size: 18px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Анимации */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fillBar {
+      from { width: 0; }
+      to { width: var(--bar-width); }
+    }
+
+    .animate {
+      animation: fadeInUp 0.8s ease-out both;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    /* Sticky Header */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 12px 0;
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .logo span {
+      margin-left: 8px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(16,185,129,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(16,185,129,0.4);
+    }
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(59,130,246,0.3);
+    }
+    .btn-secondary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(59,130,246,0.4);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+    }
+    .btn-outline:hover {
+      background: white;
+      color: var(--primary);
+    }
+    .btn-large {
+      padding: 18px 36px;
+      font-size: 1.2rem;
+    }
+    .btn-block {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Секции */
+    section {
+      padding: 80px 0;
+    }
+    .section-bg-light {
+      background: var(--bg-light);
+    }
+
+    /* Hero */
+    #hero {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    #hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+    #hero p {
+      font-size: 1.3rem;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      opacity: 0.95;
+    }
+    #hero .btn-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+    }
+    .hero-stat {
+      text-align: center;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 16px 24px;
+      backdrop-filter: blur(5px);
+    }
+    .hero-stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+    }
+    .hero-stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Заголовки секций */
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .section-subtitle {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 48px;
+    }
+
+    /* Карточки */
+    .card-grid {
+      display: grid;
+      gap: 24px;
+    }
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 32px;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Проблема */
+    .problem-card .highlight {
+      font-weight: 700;
+      color: var(--danger);
+      font-size: 1.1rem;
+    }
+    .problem-solution-note {
+      text-align: center;
+      margin-top: 40px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    /* Шаги решения */
+    .steps-timeline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .step {
+      flex: 1;
+      min-width: 200px;
+      text-align: center;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 30px;
+      right: -40px;
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+    .step-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .step h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* Демо чата */
+    .chat-mockup {
+      background: #f9fafb;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .chat-message {
+      display: flex;
+      margin-bottom: 16px;
+    }
+    .chat-message.student {
+      justify-content: flex-start;
+    }
+    .chat-message.ai {
+      justify-content: flex-end;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 16px 20px;
+      border-radius: 18px;
+      font-size: 1rem;
+      line-height: 1.5;
+      position: relative;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .student .chat-bubble {
+      background: #e5e7eb;
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+    .ai .chat-bubble {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 6px rgba(16,185,129,0.2);
+    }
+    .math-block {
+      font-family: 'Courier New', monospace;
+      background: #f0fdf4;
+      color: #064e3b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: block;
+      margin: 8px 0;
+      white-space: pre-wrap;
+      font-size: 0.95em;
+    }
+    .ai .math-block {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+    .chat-emoji {
+      font-size: 1.5em;
+      margin-right: 4px;
+    }
+
+    /* Отчет родителя */
+    .report-card {
+      background: white;
+      border: 2px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+    }
+    .report-header {
+      text-align: center;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .report-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .report-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 12px;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .progress-bar {
+      height: 24px;
+      background: #e5e7eb;
+      border-radius: 12px;
+      margin: 8px 0 16px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      border-radius: 12px;
+      animation: fillBar 1.5s ease-out forwards;
+      width: 0;
+    }
+    .topic-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .status-icon {
+      font-size: 1.5em;
+    }
+    .status-done {
+      color: var(--primary);
+    }
+    .status-warning {
+      color: var(--warning);
+    }
+    .recommendations {
+      background: #f0fdf4;
+      border-left: 4px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .recommendations p {
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    /* Преимущества */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .benefit-card {
+      text-align: center;
+      padding: 32px 20px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .benefit-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+    .benefit-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .benefit-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    /* Тарифы */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border: 2px solid var(--primary);
+      box-shadow: 0 10px 20px rgba(16,185,129,0.15);
+      transform: scale(1.02);
+    }
+    .badge-popular {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .price {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+    .price span {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .pricing-features {
+      list-style: none;
+      margin: 24px 0;
+      text-align: left;
+    }
+    .pricing-features li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pricing-features li:last-child {
+      border-bottom: none;
+    }
+    .check-icon {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* CTA */
+    #cta {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+      text-align: center;
+      padding: 100px 20px;
+    }
+    #cta h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    #cta p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.95;
+    }
+    #cta .btn-large {
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    #cta .btn-large:hover {
+      background: #f0fdf4;
+      transform: translateY(-2px);
+    }
+    .cta-note {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Footer */
+    footer {
+      background: white;
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+    }
+    .footer-contacts {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .footer-contacts a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .footer-contacts a:hover {
+      color: var(--primary);
+    }
+    .footer-contacts .contact-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Секция для инвесторов */
+    .investor-section {
+      background: var(--bg-light);
+    }
+    .investor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .investor-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .investor-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .investor-card .icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    .investor-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .investor-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+    .investor-highlight {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 992px) {
+      .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+      }
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+      .investor-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      section {
+        padding: 60px 0;
+      }
+      #hero h1 {
+        font-size: 2rem;
+      }
+      #hero p {
+        font-size: 1.1rem;
+      }
+      .section-title {
+        font-size: 2rem;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .grid-3, .grid-2, .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+      .investor-grid {
+        grid-template-columns: 1fr;
+      }
+      .steps-timeline {
+        flex-direction: column;
+        align-items: center;
+      }
+      .step:not(:last-child)::after {
+        display: none;
+      }
+      .chat-message {
+        max-width: 100%;
+      }
+      .chat-bubble {
+        max-width: 90%;
+        font-size: 0.9rem;
+      }
+      .report-card {
+        padding: 24px;
+      }
+      .pricing-card {
+        padding: 30px 20px;
+      }
+      .price {
+        font-size: 2.2rem;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .hero-stats {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .footer-contacts {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #hero h1 {
+        font-size: 1.6rem;
+      }
+      .btn-group {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .btn {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header class="sticky-header">
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <span>🎓 МатАИ</span>
+      </a>
+      <a href="#cta" class="btn btn-primary">Попробовать бесплатно</a>
+    </div>
+  </header>
+
+  <!-- Секция 1: Hero -->
+  <section id="hero">
+    <div class="container">
+      <h1 class="animate">ИИ-репетитор, который объясняет,<br>а не просто дает ответы</h1>
+      <p class="animate delay-1">Персональная подготовка к ЕГЭ/ОГЭ по математике за 5 000 ₽/мес — в 4 раза дешевле живого репетитора</p>
+      <div class="btn-group animate delay-2">
+        <a href="#cta" class="btn btn-primary btn-large">Попробовать бесплатно</a>
+        <a href="#demo" class="btn btn-outline btn-large">Смотреть демо</a>
+      </div>
+      <div class="hero-stats animate delay-3">
+        <div class="hero-stat">
+          <div class="hero-stat-value">75%</div>
+          <div class="hero-stat-label">экономии бюджета</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">+4 балла</div>
+          <div class="hero-stat-label">к ЕГЭ за месяц</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">7 мес</div>
+          <div class="hero-stat-label">окупаемость инвестиций</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 2: Проблема -->
+  <section id="problem" class="section-bg-light">
+    <div class="container">
+      <h2 class="section-title">Знакомая ситуация?</h2>
+      <div class="card-grid grid-3">
+        <div class="card animate">
+          <span class="card-icon">💰</span>
+          <h3>Репетитор стоит 2 000 ₽/час,<br>а занятий нужно 8 в месяц</h3>
+          <p><span class="highlight">16 000 ₽/мес</span></p>
+        </div>
+        <div class="card animate delay-1">
+          <span class="card-icon">😟</span>
+          <h3>Ребенок стесняется переспрашивать учителя</h3>
+          <p><span class="highlight">Пробелы накапливаются</span></p>
+        </div>
+        <div class="card animate delay-2">
+          <span class="card-icon">📉</span>
+          <h3>Вы не понимаете, что происходит на самом деле</h3>
+          <p><span class="highlight">Нет прозрачности</span></p>
+        </div>
+      </div>
+      <div class="problem-solution-note animate delay-3">
+        Мы решили все три проблемы
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 3: Решение -->
+  <section id="solution">
+    <div class="container">
+      <h2 class="section-title">Как работает МатАИ</h2>
+      <div class="steps-timeline">
+        <div class="step animate">
+          <div class="step-icon">📸</div>
+          <h3>Ученик отправляет задачу</h3>
+          <p>Фото или текст</p>
+        </div>
+        <div class="step animate delay-1">
+          <div class="step-icon">💡</div>
+          <h3>ИИ находит ошибку и объясняет</h3>
+          <p>Понятно, шаг за шагом</p>
+        </div>
+        <div class="step animate delay-2">
+          <div class="step-icon">📚</div>
+          <h3>Ученик тренируется на похожих задачах</h3>
+          <p>Закрепление навыка</p>
+        </div>
+        <div class="step animate delay-3">
+          <div class="step-icon">📊</div>
+          <h3>Родитель получает отчет</h3>
+          <p>Прогресс и прогноз</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 4: Демо интерфейса -->
+  <section id="demo" class="section-bg-light">
+    <div class="container">
+      <h2 class="section-title">Посмотрите, как это работает</h2>
+      <div class="chat-mockup animate">
+        <!-- Сообщение ученика -->
+        <div class="chat-message student">
+          <div class="chat-bubble">
+            <span class="chat-emoji">📷</span> [Ученик отправляет фото задачи]<br>
+            "Решите: Найти точку максимума функции<br>
+            y = (x² − 4x + 5) · eˣ"
+          </div>
+        </div>
+        <!-- Сообщение ИИ -->
+        <div class="chat-message ai">
+          <div class="chat-bubble">
+            Давай разберем эту задачу вместе! 🎯<br><br>
+            Сначала найдем производную:<br>
+            <span class="math-block">y' = (2x − 4) · eˣ + (x² − 4x + 5) · eˣ<br>y' = eˣ · (2x − 4 + x² − 4x + 5)<br>y' = eˣ · (x² − 2x + 1)<br>y' = eˣ · (x − 1)²</span><br>
+            Приравняем к нулю:<br>
+            <span class="math-block">eˣ · (x − 1)² = 0</span><br>
+            Так как eˣ > 0 всегда, то:<br>
+            <span class="math-block">(x − 1)² = 0<br>x = 1</span><br>
+            Проверим знак производной:<br>
+            - При x < 1: y' > 0 (функция растет)<br>
+            - При x > 1: y' > 0 (функция растет)<br><br>
+            ⚠️ Внимание! Производная не меняет знак в точке x = 1, значит это точка перегиба, а не экстремум!<br><br>
+            Правильный ответ: точка максимума не существует.<br><br>
+            Понятно? Хочешь разобрать похожую задачу для тренировки?
+          </div>
+        </div>
+        <!-- Ответ ученика -->
+        <div class="chat-message student">
+          <div class="chat-bubble">
+            "Да, давай!"
+          </div>
+        </div>
+        <!-- Ответ ИИ -->
+        <div class="chat-message ai">
+          <div class="chat-bubble">
+            Отлично! Вот задача:<br>
+            <span class="math-block">Найти точку минимума функции<br>y = (x² − 6x + 10) · eˣ</span><br>
+            Попробуй решить сам, а я проверю и объясню ошибки 😉
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 30px;" class="animate delay-1">
+        <a href="#cta" class="btn btn-primary btn-large">Попробовать бесплатно</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 5: Отчет для родителя -->
+  <section id="report">
+    <div class="container">
+      <h2 class="section-title">Вы всегда в курсе прогресса</h2>
+      <div class="report-card animate">
+        <div class="report-header">
+          <div class="report-title">Еженедельный отчет: Иван Петров</div>
+        </div>
+        <div class="report-stats">
+          <div class="stat-item">
+            <div class="stat-value">42</div>
+            <div class="stat-label">Решено задач</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">68%</div>
+            <div class="stat-label">Правильных с первого раза</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">3ч 20м</div>
+            <div class="stat-label">Время занятий</div>
+          </div>
+        </div>
+        <h3>Прогресс по темам</h3>
+        <div>
+          <div style="margin-bottom: 12px;">
+            <span>Алгебра</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="--bar-width: 80%;"></div>
+            </div>
+            <span style="float: right; margin-top: -20px;">80%</span>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <span>Геометрия</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="--bar-width: 60%;"></div>
+            </div>
+            <span style="float: right; margin-top: -20px;">60%</span>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <span>Теория вероятностей</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="--bar-width: 40%;"></div>
+            </div>
+            <span style="float: right; margin-top: -20px;">40%</span>
+          </div>
+        </div>
+        <h3>Разобранные темы</h3>
+        <div class="topic-status status-done">
+          <span class="status-icon">✅</span> Производные — освоено
+        </div>
+        <div class="topic-status status-done">
+          <span class="status-icon">✅</span> Интегралы — освоено
+        </div>
+        <div class="topic-status status-warning">
+          <span class="status-icon">⚠️</span> Параметры — требует внимания
+        </div>
+        <div class="recommendations">
+          <p>📌 Рекомендации:</p>
+          <p>На следующей неделе рекомендуем уделить внимание параметрам — это слабая тема.</p>
+          <p>Прогноз балла ЕГЭ: 76 (было 72)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 6: Преимущества -->
+  <section id="benefits" class="section-bg-light">
+    <div class="container">
+      <h2 class="section-title">Почему родители выбирают нас</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card animate">
+          <div class="benefit-icon">⏰</div>
+          <h3>Доступен 24/7</h3>
+          <p>Не нужно подстраиваться под расписание репетитора</p>
+        </div>
+        <div class="benefit-card animate delay-1">
+          <div class="benefit-icon">😊</div>
+          <h3>Терпеливый и никогда не устает</h3>
+          <p>Объяснит 10 раз, если нужно</p>
+        </div>
+        <div class="benefit-card animate delay-2">
+          <div class="benefit-icon">🧠</div>
+          <h3>Не дает списать</h3>
+          <p>Учит думать, а не просто дает ответы</p>
+        </div>
+        <div class="benefit-card animate">
+          <div class="benefit-icon">📊</div>
+          <h3>Прозрачность для родителей</h3>
+          <p>Еженедельные отчеты о прогрессе</p>
+        </div>
+        <div class="benefit-card animate delay-1">
+          <div class="benefit-icon">💸</div>
+          <h3>В 4 раза дешевле репетитора</h3>
+          <p>5 000 ₽/мес вместо 20 000 ₽</p>
+        </div>
+        <div class="benefit-card animate delay-2">
+          <div class="benefit-icon">📱</div>
+          <h3>Работает в ВКонтакте</h3>
+          <p>Не нужно скачивать отдельные приложения</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 7: Цены и тарифы -->
+  <section id="pricing">
+    <div class="container">
+      <h2 class="section-title">Простые и понятные цены</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card animate">
+          <h3>Ежемесячная подписка</h3>
+          <div class="price">5 000 <span>₽/мес</span></div>
+          <ul class="pricing-features">
+            <li><span class="check-icon">✓</span> Безлимитные задачи</li>
+            <li><span class="check-icon">✓</span> Персональные объяснения</li>
+            <li><span class="check-icon">✓</span> Еженедельные отчеты</li>
+            <li><span class="check-icon">✓</span> Отмена в любой момент</li>
+          </ul>
+          <a href="#cta" class="btn btn-primary btn-block">Начать бесплатно</a>
+        </div>
+        <div class="pricing-card featured animate delay-1">
+          <div class="badge-popular">Популярный выбор</div>
+          <h3>Полугодовая подписка</h3>
+          <div class="price">21 000 <span>₽ (экономия 30%)</span></div>
+          <ul class="pricing-features">
+            <li><span class="check-icon">✓</span> Всё из ежемесячного тарифа</li>
+            <li><span class="check-icon">✓</span> Фиксация цены на 6 месяцев</li>
+            <li><span class="check-icon">✓</span> Приоритетная поддержка</li>
+            <li><span class="check-icon">✓</span> Бонус: 5 пробных экзаменов</li>
+          </ul>
+          <a href="#cta" class="btn btn-primary btn-block">Выбрать тариф</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 8: Для инвесторов -->
+  <section id="investors" class="investor-section">
+    <div class="container">
+      <h2 class="section-title">Почему МатАИ — выгодная инвестиция</h2>
+      <div class="investor-grid">
+        <div class="investor-card animate">
+          <div class="icon">📈</div>
+          <h3>Растущий рынок</h3>
+          <p>Рынок онлайн-подготовки к ЕГЭ растет на <span class="investor-highlight">38% в год</span>. Более 2 млн выпускников ежегодно.</p>
+        </div>
+        <div class="investor-card animate delay-1">
+          <div class="icon">💰</div>
+          <h3>Экономика сходится</h3>
+          <p>LTV/CAC = <span class="investor-highlight">4.57</span>. Окупаемость затрат на клиента — 1 месяц. Полная окупаемость инвестиций — 7 месяцев.</p>
+        </div>
+        <div class="investor-card animate delay-2">
+          <div class="icon">🛡️</div>
+          <h3>Защита инвестиций</h3>
+          <p>Траншевая структура финансирования. Максимальный риск — <span class="investor-highlight">500 000 руб.</span> при полной сумме 1 500 000 руб.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция 9: CTA -->
+  <section id="cta">
+    <div class="container">
+      <h2 class="animate">Начните бесплатно прямо сейчас</h2>
+      <p class="animate delay-1">7 дней бесплатного доступа. Без привязки карты. Отмена в один клик.</p>
+      <a href="#" class="btn btn-primary btn-large animate delay-2">Попробовать бесплатно</a>
+      <div class="cta-note animate delay-3">Уже попробовали 500+ семей</div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-contacts">
+        <span class="contact-name">Артур Бугай Сергеевич</span>
+        <a href="tel:+79122792377">+7 912 279 23 77</a>
+        <a href="mailto:support@matai.ru">support@matai.ru</a>
+        <a href="#">Telegram</a>
+        <a href="#">ВКонтакте</a>
+      </div>
+      <p>© 2025 МатАИ. Все права защищены.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
