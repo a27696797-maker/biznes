@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МатАИ — Интерактивное Демо</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-light: #f3f4f6;
+      --border-color: #e5e7eb;
+      --radius: 16px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .btn-back {
+      text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;
+      padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); transition: 0.2s;
+    }
+    .btn-back:hover { background: var(--bg-light); color: var(--primary); border-color: var(--primary); }
+
+    .main-container {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Экран выбора задач */
+    #task-selection {
+      text-align: center;
+      margin-top: 40px;
+      animation: fadeIn 0.5s ease-out;
+    }
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .task-card {
+      background: white;
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      text-align: left;
+    }
+    .task-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 15px rgba(16,185,129,0.15);
+    }
+    .task-card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text-primary); }
+    .task-card p { font-size: 0.9rem; color: var(--text-secondary); }
+
+    /* Экран чата */
+    #chat-interface {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      background: #f9fafb;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-window {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .message {
+      max-width: 85%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      animation: slideUp 0.3s ease-out;
+    }
+    .message.ai {
+      align-self: flex-start;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+    .message.user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .math-block {
+      font-family: 'Courier New', monospace;
+      background: rgba(16, 185, 129, 0.1);
+      color: #064e3b;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: block;
+      margin: 8px 0;
+      font-size: 0.9rem;
+    }
+    .message.user .math-block {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    /* Индикатор печати */
+    .typing-indicator {
+      align-self: flex-start;
+      background: var(--bg-light);
+      padding: 12px 18px;
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      display: none;
+      gap: 4px;
+    }
+    .typing-indicator span {
+      width: 8px; height: 8px; background: #9ca3af; border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    /* Панель выбора ответов */
+    .choices-panel {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .choice-btn {
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background: white;
+      color: var(--text-primary);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .choice-btn:hover {
+      border-color: var(--primary);
+      background: #f0fdf4;
+      color: var(--primary-dark);
+    }
+
+    /* Финальный экран */
+    .final-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .final-screen h2 { color: var(--primary); margin-bottom: 16px; }
+    .final-screen p { color: var(--text-secondary); margin-bottom: 24px; }
+    .btn-cta {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .btn-cta:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+    @media (max-width: 600px) {
+      .main-container { padding: 12px; }
+      .message { max-width: 95%; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="index.html" class="logo">🎓 МатАИ (Демо)</a>
+    <a href="index.html" class="btn-back">← На главную</a>
+  </header>
+
+  <div class="main-container">
+    
+    <!-- Экран 1: Выбор задачи -->
+    <div id="task-selection">
+      <h2 style="font-size: 1.8rem; margin-bottom: 8px;">Выберите задачу для демо</h2>
+      <p style="color: var(--text-secondary);">Попробуйте, как ИИ объясняет материал, не давая готовых ответов.</p>
+      <div class="task-grid">
+        <div class="task-card" onclick="startDemo('intervals')">
+          <h3>📈 Метод интервалов</h3>
+          <p>Решение рациональных неравенств. Проверим понимание знаков.</p>
+        </div>
+        <div class="task-card" onclick="startDemo('derivative')">
+          <h3>📉 Производная и экстремумы</h3>
+          <p>Поиск точек максимума и минимума функции.</p>
+        </div>
+        <div class="task-card" onclick="startDemo('text')">
+          <h3>🚗 Текстовая задача</h3>
+          <p>Составление уравнения по условию движения.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран 2: Чат -->
+    <div id="chat-interface">
+      <div class="chat-header">
+        <span>🤖</span> ИИ-Репетитор (Демо-режим)
+      </div>
+      <div class="chat-window" id="chat-window">
+        <!-- Сообщения будут добавляться здесь через JS -->
+        <div class="typing-indicator" id="typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <div class="choices-panel" id="choices-panel">
+        <!-- Кнопки выбора будут здесь -->
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Сценарий демо (State Machine)
+    const scenarios = {
+      intervals: [
+        {
+          sender: 'ai',
+          text: 'Привет! Давай решим неравенство: <span class="math-block">(x - 2) / (x + 3) > 0</span><br>Первым делом найди корни числителя и знаменателя. Какие они?'
+        },
+        {
+          choices: [
+            { text: 'Корни: 2 и -3', next: 1 },
+            { text: 'Не помню, как находить корни', next: 'hint_roots' }
+          ]
+        },
+        {
+          // Шаг 1 (правильный ответ)
+          sender: 'ai',
+          text: 'Отлично! 👍 Теперь давай проверим знак на интервале <b>(-3; 2)</b>. Подставь туда, например, число 0. Какой знак получится?'
+        },
+        {
+          choices: [
+            { text: 'Получилось -2/3, знак минус', next: 2 },
+            { text: 'Получился плюс', next: 'hint_sign' }
+          ]
+        },
+        {
+          // Шаг 2 (правильный ответ)
+          sender: 'ai',
+          text: 'Идеально! 🎯 Значит, на этом интервале выражение отрицательное. А нам нужно <b>"> 0"</b> (больше нуля). Учитывая знаки на всех интервалах, какой будет окончательный ответ?'
+        },
+        {
+          choices: [
+            { text: 'x ∈ (-∞; -3) ∪ (2; +∞)', next: 3 },
+            { text: 'x ∈ (-3; 2)', next: 'hint_final' }
+          ]
+        },
+        {
+          // Шаг 3 (Финал)
+          sender: 'ai',
+          text: 'Блестяще! 🎉 Ты сам пришел к правильному ответу, потому что понял логику, а не просто запомнил правило.<br><br>В полной версии я бы сразу дал тебе 3 аналогичные задачи для закрепления этого навыка!'
+        },
+        {
+          isFinal: true
+        }
+      ],
+      // Заглушки для других задач (можно расширить по аналогии)
+      derivative: [{ sender: 'ai', text: 'Демо для этой задачи в разработке. Попробуйте "Метод интервалов"!' }],
+      text: [{ sender: 'ai', text: 'Демо для этой задачи в разработке. Попробуйте "Метод интервалов"!' }]
+    };
+
+    // Подсказки для неправильных ответов
+    const hints = {
+      hint_roots: { sender: 'ai', text: 'Ничего страшного! Чтобы найти корень числителя, приравняй (x - 2) к нулю. А для знаменателя приравняй (x + 3) к нулю. Попробуй еще раз!', next: 0 },
+      hint_sign: { sender: 'ai', text: 'Давай посчитаем вместе: (0 - 2) = -2. (0 + 3) = 3. Делим -2 на 3. Минус на плюс дает...?', next: 1 },
+      hint_final: { sender: 'ai', text: 'Почти! Но мы ищем, где выражение <b>больше</b> нуля (положительное). Посмотри на крайние интервалы.', next: 2 }
+    };
+
+    let currentScenario = [];
+    let currentStep = 0;
+
+    function startDemo(type) {
+      document.getElementById('task-selection').style.display = 'none';
+      document.getElementById('chat-interface').style.display = 'flex';
+      currentScenario = scenarios[type];
+      currentStep = 0;
+      processStep();
+    }
+
+    function processStep() {
+      const step = currentScenario[currentStep];
+      
+      if (step.isFinal) {
+        showFinalScreen();
+        return;
+      }
+
+      if (step.sender) {
+        showTyping();
+        setTimeout(() => {
+          hideTyping();
+          addMessage(step.text, step.sender);
+          if (step.choices) {
+            showChoices(step.choices);
+          } else {
+            // Если это ответ на подсказку, переходим к следующему шагу
+            if (step.next !== undefined) {
+              currentStep = step.next;
+              setTimeout(processStep, 1000);
+            }
+          }
+        }, 1200); // Имитация раздумий ИИ
+      }
+    }
+
+    function addMessage(text, sender) {
+      const chatWindow = document.getElementById('chat-window');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+      msgDiv.innerHTML = text;
+      // Вставляем перед индикатором печати
+      chatWindow.insertBefore(msgDiv, document.getElementById('typing'));
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    function showTyping() {
+      document.getElementById('typing').style.display = 'flex';
+      document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+    }
+
+    function hideTyping() {
+      document.getElementById('typing').style.display = 'none';
+    }
+
+    function showChoices(choices) {
+      const panel = document.getElementById('choices-panel');
+      panel.innerHTML = '';
+      choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = choice.text;
+        btn.onclick = () => handleChoice(choice);
+        panel.appendChild(btn);
+      });
+    }
+
+    function handleChoice(choice) {
+      // Добавляем выбор пользователя в чат
+      addMessage(choice.text, 'user');
+      document.getElementById('choices-panel').innerHTML = ''; // Очищаем кнопки
+      
+      if (typeof choice.next === 'number') {
+        currentStep = choice.next;
+      } else {
+        // Это подсказка
+        const hint = hints[choice.next];
+        currentStep = currentScenario.length; // Временная метка, чтобы вставить подсказку
+        currentScenario.splice(currentStep, 0, hint);
+      }
+      
+      setTimeout(processStep, 500);
+    }
+
+    function showFinalScreen() {
+      const panel = document.getElementById('choices-panel');
+      panel.innerHTML = `
+        <div class="final-screen">
+          <h2>Демо завершено! 🎓</h2>
+          <p>В полной версии МатАИ вы получите доступ к 1000+ задач, персональному плану подготовки и еженедельным отчетам для родителей.</p>
+          <a href="index.html#pricing" class="btn-cta">Оформить подписку за 5 000 ₽/мес</a>
+          <br><br>
+          <a href="index.html" style="color: var(--text-secondary); font-size: 0.9rem;">← Вернуться на главную страницу</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
