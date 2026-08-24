@@ -226,30 +226,89 @@
     .section-header p { color: var(--text-secondary); font-size: 1.125rem; margin-top: 12px; }
     .bg-light { background: #f3f4f6; }
 
-    /* --- Problem Cards --- */
+    /* --- Problem Cards (Обновленный дизайн с картинками) --- */
     .problem-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      gap: 32px;
     }
-    .problem-card {
+    .problem-card-img {
       background: white;
-      padding: 32px;
       border-radius: var(--radius);
+      overflow: hidden;
       border: 1px solid var(--border-color);
-      transition: all 0.3s;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
-    .problem-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
-    .problem-icon {
-      width: 56px; height: 56px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 20px;
+    .problem-card-img:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(239, 68, 68, 0.15); /* Легкая красная тень для акцента на проблеме */
+      border-color: transparent;
     }
-    .problem-card h3 { font-size: 1.25rem; margin-bottom: 12px; }
-    .problem-card .highlight { color: var(--danger); font-weight: 700; font-size: 1.1rem; }
+    .problem-image-wrapper {
+      position: relative;
+      height: 200px;
+      overflow: hidden;
+    }
+    .problem-image-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.95) 100%);
+    }
+    .problem-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.6s ease;
+      filter: grayscale(60%); /* По умолчанию слегка обесцвечено (символ проблемы) */
+    }
+    .problem-card-img:hover .problem-image-wrapper img {
+      transform: scale(1.08);
+      filter: grayscale(0%); /* При наведении возвращается цвет (символ решения) */
+    }
+    .problem-icon-float {
+      position: absolute;
+      bottom: -24px;
+      left: 24px;
+      width: 56px;
+      height: 56px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+      transition: transform 0.3s ease;
+    }
+    .problem-card-img:hover .problem-icon-float {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .problem-content {
+      padding: 40px 28px 28px;
+      flex: 1;
+    }
+    .problem-content h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .problem-content p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+    .problem-content .highlight {
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
 
     /* --- Steps Timeline --- */
     .steps-container {
@@ -370,7 +429,7 @@
     }
     .benefit-card-img:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.15);
       border-color: transparent;
     }
     .benefit-image-wrapper {
@@ -542,6 +601,15 @@
             <a href="demo.html" class="btn btn-primary">🚀 Пройти 10 задач бесплатно</a>
             <a href="#pricing" class="btn btn-dark">Смотреть тарифы</a>
           </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <h4>4.57x</h4>
+              <p>ROI маркетинга</p>
+            </div>
+            <div class="stat-item">
+              <h4>7 мес</h4>
+              <p>Окупаемость</p>
+            </div>
             <div class="stat-item">
               <h4>−75%</h4>
               <p>Экономия бюджета</p>
@@ -573,7 +641,7 @@
     </div>
   </section>
 
-  <!-- Problem Section -->
+  <!-- Problem Section (Обновленный блок с изображениями) -->
   <section class="bg-light">
     <div class="container">
       <div class="section-header reveal">
@@ -581,21 +649,43 @@
         <p>Родители переплачивают, а дети не получают того, что им действительно нужно для высокого балла.</p>
       </div>
       <div class="problem-grid">
-        <div class="problem-card reveal delay-1">
-          <div class="problem-icon">💸</div>
-          <h3>Неподъемные цены</h3>
-          <p>Хороший репетитор стоит от 2 000 ₽/час. За 8 занятий в месяц семья тратит <span class="highlight">16 000 ₽</span>, что доступно не всем.</p>
+        
+        <!-- Карточка 1: Неподъемные цены -->
+        <div class="problem-card-img reveal delay-1">
+          <div class="problem-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80&auto=format" alt="Высокая стоимость обучения" loading="lazy">
+            <div class="problem-icon-float">💸</div>
+          </div>
+          <div class="problem-content">
+            <h3>Неподъемные цены</h3>
+            <p>Хороший репетитор стоит от 2 000 ₽/час. За 8 занятий в месяц семья тратит <span class="highlight">16 000 ₽</span>, что доступно далеко не всем.</p>
+          </div>
         </div>
-        <div class="problem-card reveal delay-2">
-          <div class="problem-icon">😶</div>
-          <h3>Страх задать вопрос</h3>
-          <p>Ребенок стесняется переспрашивать учителя на занятии. В результате <span class="highlight">пробелы накапливаются</span> и превращаются в снежный ком.</p>
+
+        <!-- Карточка 2: Страх задать вопрос -->
+        <div class="problem-card-img reveal delay-2">
+          <div class="problem-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80&auto=format" alt="Страх спросить учителя" loading="lazy">
+            <div class="problem-icon-float">😶</div>
+          </div>
+          <div class="problem-content">
+            <h3>Страх задать вопрос</h3>
+            <p>Ребенок стесняется переспрашивать учителя на занятии. В результате <span class="highlight">пробелы накапливаются</span> и превращаются в снежный ком.</p>
+          </div>
         </div>
-        <div class="problem-card reveal delay-3">
-          <div class="problem-icon">🌫️</div>
-          <h3>Нет прозрачности</h3>
-          <p>Родитель платит деньги, но <span class="highlight">не понимает</span>, что происходит на самом деле и есть ли реальный прогресс.</p>
+
+        <!-- Карточка 3: Нет прозрачности -->
+        <div class="problem-card-img reveal delay-3">
+          <div class="problem-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80&auto=format" alt="Отсутствие прозрачности для родителей" loading="lazy">
+            <div class="problem-icon-float">🌫️</div>
+          </div>
+          <div class="problem-content">
+            <h3>Нет прозрачности</h3>
+            <p>Родитель платит деньги, но <span class="highlight">не понимает</span>, что происходит на самом деле и есть ли реальный прогресс в знаниях.</p>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -726,7 +816,7 @@
     </div>
   </section>
 
-  <!-- Benefits (Обновленный блок с изображениями) -->
+  <!-- Benefits -->
   <section class="bg-light benefits-section">
     <div class="container">
       <div class="section-header reveal">
@@ -860,10 +950,9 @@
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
-          // Trigger progress bars if inside report section
           if(entry.target.querySelector('.progress-fill')) {
              entry.target.querySelectorAll('.progress-fill').forEach(bar => {
-               bar.style.width = bar.style.width; // Trigger reflow if needed, but CSS transition handles it on class add
+               bar.style.width = bar.style.width;
              });
           }
         }
