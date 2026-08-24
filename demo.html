@@ -3,419 +3,624 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>МатАИ — Интерактивное Демо</title>
+  <title>МатАИ — Демо ИИ-репетитора</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #10b981;
       --primary-dark: #059669;
+      --secondary: #3b82f6;
       --text-primary: #1f2937;
       --text-secondary: #6b7280;
-      --bg-light: #f3f4f6;
+      --bg-light: #f9fafb;
       --border-color: #e5e7eb;
+      --danger: #ef4444;
+      --shadow-sm: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-md: 0 10px 15px rgba(0,0,0,0.1);
       --radius: 16px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg-light);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #ffffff;
       color: var(--text-primary);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
       height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-container {
       display: flex;
       flex-direction: column;
-    }
-    .header {
-      background: white;
-      padding: 16px 24px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; }
-    .btn-back {
-      text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem;
-      padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); transition: 0.2s;
-    }
-    .btn-back:hover { background: var(--bg-light); color: var(--primary); border-color: var(--primary); }
-
-    .main-container {
-      flex: 1;
-      max-width: 800px;
-      width: 100%;
+      height: 100vh;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
+      background: #ffffff;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
     }
 
-    /* Экран выбора задач */
-    #task-selection {
-      text-align: center;
-      margin-top: 40px;
-      animation: fadeIn 0.5s ease-out;
+    /* Стартовый экран */
+    #start-screen {
+      flex: 1;
+      overflow-y: auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+      transition: opacity 0.3s ease;
     }
-    .task-grid {
+    #start-screen.hidden {
+      display: none;
+    }
+    .start-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .start-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .task-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 32px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
     }
     .task-card {
       background: white;
-      padding: 24px;
+      border: 2px solid var(--border-color);
       border-radius: var(--radius);
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 28px 20px;
       cursor: pointer;
       transition: all 0.3s ease;
-      border: 2px solid transparent;
-      text-align: left;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
     }
     .task-card:hover {
-      transform: translateY(-4px);
       border-color: var(--primary);
-      box-shadow: 0 10px 15px rgba(16,185,129,0.15);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
     }
-    .task-card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--text-primary); }
-    .task-card p { font-size: 0.9rem; color: var(--text-secondary); }
+    .task-card-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .task-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .task-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
 
     /* Экран чата */
-    #chat-interface {
-      display: none;
+    #chat-screen {
+      flex: 1;
+      display: flex;
       flex-direction: column;
-      height: 100%;
-      background: white;
-      border-radius: var(--radius);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
       overflow: hidden;
-      animation: fadeIn 0.5s ease-out;
+    }
+    #chat-screen.hidden {
+      display: none;
     }
     .chat-header {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border-color);
-      background: #f9fafb;
+      background: var(--primary);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .chat-header-title {
+      font-size: 1.2rem;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .chat-window {
+    .chat-header-back {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .chat-header-back:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 24px;
+      padding: 20px;
+      background: #f9fafb;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
     .message {
-      max-width: 85%;
-      padding: 14px 18px;
-      border-radius: 18px;
-      font-size: 0.95rem;
-      line-height: 1.5;
-      animation: slideUp 0.3s ease-out;
+      display: flex;
+      animation: fadeInUp 0.4s ease-out;
     }
     .message.ai {
-      align-self: flex-start;
-      background: var(--bg-light);
-      color: var(--text-primary);
-      border-bottom-left-radius: 4px;
+      justify-content: flex-start;
     }
     .message.user {
-      align-self: flex-end;
-      background: var(--primary);
+      justify-content: flex-end;
+    }
+    .bubble {
+      max-width: 80%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 1rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      box-shadow: var(--shadow-sm);
+    }
+    .ai .bubble {
+      background: white;
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .user .bubble {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       border-bottom-right-radius: 4px;
     }
-    .math-block {
-      font-family: 'Courier New', monospace;
-      background: rgba(16, 185, 129, 0.1);
-      color: #064e3b;
-      padding: 8px 12px;
-      border-radius: 8px;
-      display: block;
-      margin: 8px 0;
-      font-size: 0.9rem;
-    }
-    .message.user .math-block {
-      background: rgba(255,255,255,0.2);
-      color: white;
-    }
-
-    /* Индикатор печати */
     .typing-indicator {
-      align-self: flex-start;
-      background: var(--bg-light);
-      padding: 12px 18px;
-      border-radius: 18px;
-      border-bottom-left-radius: 4px;
-      display: none;
+      display: flex;
       gap: 4px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 18px;
+      width: fit-content;
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
     }
     .typing-indicator span {
-      width: 8px; height: 8px; background: #9ca3af; border-radius: 50%;
-      animation: bounce 1.4s infinite ease-in-out both;
+      width: 8px;
+      height: 8px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typingBounce 1.2s infinite;
     }
-    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes typingBounce {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-8px);
+      }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-    /* Панель выбора ответов */
-    .choices-panel {
-      padding: 16px 24px;
-      border-top: 1px solid var(--border-color);
+    .choice-panel {
+      padding: 16px 20px;
       background: white;
+      border-top: 1px solid var(--border-color);
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
     }
     .choice-btn {
       padding: 12px 20px;
-      border-radius: 12px;
-      border: 2px solid var(--border-color);
-      background: white;
-      color: var(--text-primary);
+      border-radius: 24px;
       font-weight: 500;
       font-size: 0.95rem;
+      border: 2px solid var(--border-color);
+      background: white;
       cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
+      transition: all 0.2s ease;
+      color: var(--text-primary);
+      text-align: center;
+      min-width: 200px;
+      max-width: 100%;
+      white-space: normal;
     }
     .choice-btn:hover {
       border-color: var(--primary);
+      color: var(--primary);
       background: #f0fdf4;
-      color: var(--primary-dark);
+    }
+    .choice-btn:active {
+      transform: scale(0.98);
     }
 
-    /* Финальный экран */
-    .final-screen {
-      text-align: center;
-      padding: 40px 20px;
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .task-cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .start-title {
+        font-size: 1.6rem;
+      }
+      .bubble {
+        max-width: 90%;
+        font-size: 0.9rem;
+      }
+      .choice-btn {
+        min-width: 100%;
+      }
     }
-    .final-screen h2 { color: var(--primary); margin-bottom: 16px; }
-    .final-screen p { color: var(--text-secondary); margin-bottom: 24px; }
-    .btn-cta {
-      display: inline-block;
-      padding: 14px 32px;
-      background: var(--primary);
-      color: white;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .btn-cta:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-
-    @media (max-width: 600px) {
-      .main-container { padding: 12px; }
-      .message { max-width: 95%; font-size: 0.9rem; }
+    @media (max-width: 480px) {
+      .app-container {
+        max-width: 100%;
+      }
+      .chat-header {
+        padding: 12px 16px;
+      }
+      .choice-panel {
+        padding: 12px;
+      }
+      .choice-btn {
+        padding: 10px 16px;
+      }
     }
   </style>
 </head>
 <body>
-
-  <header class="header">
-    <a href="index.html" class="logo">🎓 МатАИ (Демо)</a>
-    <a href="index.html" class="btn-back">← На главную</a>
-  </header>
-
-  <div class="main-container">
-    
-    <!-- Экран 1: Выбор задачи -->
-    <div id="task-selection">
-      <h2 style="font-size: 1.8rem; margin-bottom: 8px;">Выберите задачу для демо</h2>
-      <p style="color: var(--text-secondary);">Попробуйте, как ИИ объясняет материал, не давая готовых ответов.</p>
-      <div class="task-grid">
-        <div class="task-card" onclick="startDemo('intervals')">
-          <h3>📈 Метод интервалов</h3>
-          <p>Решение рациональных неравенств. Проверим понимание знаков.</p>
+  <div class="app-container">
+    <!-- Стартовый экран -->
+    <div id="start-screen">
+      <div class="start-title">🎓 МатАИ</div>
+      <div class="start-subtitle">
+        Интерактивное демо: выберите задачу и пройдите по цепочке логических вопросов вместе с ИИ-репетитором.
+      </div>
+      <div class="task-cards">
+        <div class="task-card" data-task="1">
+          <div class="task-card-icon">📐</div>
+          <h3>Метод интервалов</h3>
+          <p>Решение неравенства (x - 2) / (x + 3) > 0</p>
         </div>
-        <div class="task-card" onclick="startDemo('derivative')">
-          <h3>📉 Производная и экстремумы</h3>
-          <p>Поиск точек максимума и минимума функции.</p>
+        <div class="task-card" data-task="2">
+          <div class="task-card-icon">📈</div>
+          <h3>Производная и экстремумы</h3>
+          <p>Нахождение точки минимума функции</p>
         </div>
-        <div class="task-card" onclick="startDemo('text')">
-          <h3>🚗 Текстовая задача</h3>
-          <p>Составление уравнения по условию движения.</p>
+        <div class="task-card" data-task="3">
+          <div class="task-card-icon">🎲</div>
+          <h3>Теория вероятностей</h3>
+          <p>Задача на вероятность без возвращения</p>
         </div>
       </div>
     </div>
 
-    <!-- Экран 2: Чат -->
-    <div id="chat-interface">
+    <!-- Экран чата -->
+    <div id="chat-screen" class="hidden">
       <div class="chat-header">
-        <span>🤖</span> ИИ-Репетитор (Демо-режим)
+        <span class="chat-header-title">💬 Диалог с МатАИ</span>
+        <button class="chat-header-back" id="btn-back">← К задачам</button>
       </div>
-      <div class="chat-window" id="chat-window">
-        <!-- Сообщения будут добавляться здесь через JS -->
-        <div class="typing-indicator" id="typing">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
-      <div class="choices-panel" id="choices-panel">
-        <!-- Кнопки выбора будут здесь -->
-      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="choice-panel" id="choice-panel"></div>
     </div>
-
   </div>
 
   <script>
-    // Сценарий демо (State Machine)
-    const scenarios = {
-      intervals: [
-        {
-          sender: 'ai',
-          text: 'Привет! Давай решим неравенство: <span class="math-block">(x - 2) / (x + 3) > 0</span><br>Первым делом найди корни числителя и знаменателя. Какие они?'
-        },
-        {
+    (function() {
+      // ====== СЦЕНАРИИ ДИАЛОГОВ ======
+      const scenarios = {
+        // Сценарий 1: Метод интервалов
+        's1_step1': {
+          text: 'Решим неравенство: (x - 2) / (x + 3) > 0. Первый шаг: найди корни числителя и знаменателя. Какие они?',
           choices: [
-            { text: 'Корни: 2 и -3', next: 1 },
-            { text: 'Не помню, как находить корни', next: 'hint_roots' }
+            { label: 'Корни: 2 и -3', nextStepId: 's1_step2', isCorrect: true },
+            { label: 'Не помню, как находить', nextStepId: null, isCorrect: false, hint: 'Подсказка: корни числителя — это значения x, при которых числитель равен нулю. Корни знаменателя — значения x, при которых знаменатель равен нулю.' }
+          ],
+          wrongHint: 'Подсказка: корни числителя — это значения x, при которых числитель равен нулю. Корни знаменателя — значения x, при которых знаменатель равен нулю.'
+        },
+        's1_step2': {
+          text: 'Отлично! 👍 Теперь проверим знак на интервале (-3; 2). Подставь туда пробное число, например, 0. Какой знак получится?',
+          choices: [
+            { label: 'Получилось -2/3, знак минус', nextStepId: 's1_step3', isCorrect: true },
+            { label: 'Получился плюс', nextStepId: null, isCorrect: false, hint: 'Подсказка: (0-2)/(0+3) = ? Посчитай внимательно.' }
+          ],
+          wrongHint: 'Подсказка: (0-2)/(0+3) = ? Посчитай внимательно.'
+        },
+        's1_step3': {
+          text: 'Идеально! 🎯 Значит, здесь выражение отрицательное. А нам нужно \'> 0\'. Учитывая знаки на всех интервалах, какой будет окончательный ответ?',
+          choices: [
+            { label: 'x ∈ (-∞; -3) ∪ (2; +∞)', nextStepId: 's1_final', isCorrect: true },
+            { label: 'x ∈ (-3; 2)', nextStepId: null, isCorrect: false, hint: 'Подсказка: неравенство > 0 означает, что выражение положительно. На каких интервалах знак положительный? Вспомни метод интервалов.' }
+          ],
+          wrongHint: 'Подсказка: неравенство > 0 означает, что выражение положительно. На каких интервалах знак положительный? Вспомни метод интервалов.'
+        },
+        's1_final': {
+          text: 'Блестяще! 🎉 Ты сам пришел к ответу, потому что понял логику метода интервалов, а не просто заучил правило. В полной версии я бы сразу дал тебе 3 похожие задачи для закрепления!',
+          choices: [
+            { label: 'Вернуться к выбору задач', nextStepId: 'END', isCorrect: true }
           ]
         },
-        {
-          // Шаг 1 (правильный ответ)
-          sender: 'ai',
-          text: 'Отлично! 👍 Теперь давай проверим знак на интервале <b>(-3; 2)</b>. Подставь туда, например, число 0. Какой знак получится?'
-        },
-        {
+
+        // Сценарий 2: Производная и экстремумы
+        's2_step1': {
+          text: 'Найдем точку минимума функции y = x² - 4x + 5. С чего начнем?',
           choices: [
-            { text: 'Получилось -2/3, знак минус', next: 2 },
-            { text: 'Получился плюс', next: 'hint_sign' }
+            { label: 'Найдем производную функции', nextStepId: 's2_step2', isCorrect: true },
+            { label: 'Подставим x = 0', nextStepId: null, isCorrect: false, hint: 'Подсказка: для нахождения экстремумов сначала нужно найти производную функции.' }
+          ],
+          wrongHint: 'Подсказка: для нахождения экстремумов сначала нужно найти производную функции.'
+        },
+        's2_step2': {
+          text: 'Верно! y\' = 2x - 4. Чтобы найти критическую точку, мы должны приравнять производную к чему?',
+          choices: [
+            { label: 'Приравнять к нулю (y\' = 0)', nextStepId: 's2_step3', isCorrect: true },
+            { label: 'Приравнять к исходной функции', nextStepId: null, isCorrect: false, hint: 'Подсказка: критические точки находятся из условия равенства производной нулю.' }
+          ],
+          wrongHint: 'Подсказка: критические точки находятся из условия равенства производной нулю.'
+        },
+        's2_step3': {
+          text: 'Точно! 2x - 4 = 0, отсюда x = 2. Но как нам убедиться, что это именно минимум, а не максимум?',
+          choices: [
+            { label: 'Производная меняет знак с минуса на плюс', nextStepId: 's2_final', isCorrect: true },
+            { label: 'Производная меняет знак с плюса на минус', nextStepId: null, isCorrect: false, hint: 'Подсказка: минимум — это переход от убывания к возрастанию, то есть производная меняет знак с минуса на плюс.' }
+          ],
+          wrongHint: 'Подсказка: минимум — это переход от убывания к возрастанию, то есть производная меняет знак с минуса на плюс.'
+        },
+        's2_final': {
+          text: 'Абсолютно верно! 🌟 Ты отлично усвоил алгоритм исследования функции. Так шаг за шагом мы разберем любую сложную задачу из ЕГЭ.',
+          choices: [
+            { label: 'Вернуться к выбору задач', nextStepId: 'END', isCorrect: true }
           ]
         },
-        {
-          // Шаг 2 (правильный ответ)
-          sender: 'ai',
-          text: 'Идеально! 🎯 Значит, на этом интервале выражение отрицательное. А нам нужно <b>"> 0"</b> (больше нуля). Учитывая знаки на всех интервалах, какой будет окончательный ответ?'
-        },
-        {
+
+        // Сценарий 3: Теория вероятностей
+        's3_step1': {
+          text: 'В мешке 3 белых и 2 черных шара. Мы достаем 2 шара подряд. Какова вероятность, что оба белые?',
           choices: [
-            { text: 'x ∈ (-∞; -3) ∪ (2; +∞)', next: 3 },
-            { text: 'x ∈ (-3; 2)', next: 'hint_final' }
+            { label: '3/5 умножить на 3/5', nextStepId: null, isCorrect: false, hint: 'Подсказка: после того, как мы вытащили первый белый шар, количество шаров меняется. Подумай о зависимых событиях.' },
+            { label: '3/5 умножить на 2/4', nextStepId: 's3_step2', isCorrect: true }
+          ],
+          wrongHint: 'Подсказка: после того, как мы вытащили первый белый шар, количество шаров меняется. Подумай о зависимых событиях.'
+        },
+        's3_step2': {
+          text: 'Отличный ход! 👏 Ты учел, что после вытаскивания первого белого шара, белых осталось 2, а всего шаров стало 4. Давай посчитаем: 3/5 * 2/4 = 6/20. Можно ли эту дробь сократить?',
+          choices: [
+            { label: 'Да, получится 3/10', nextStepId: 's3_final', isCorrect: true },
+            { label: 'Нет, это окончательный ответ', nextStepId: null, isCorrect: false, hint: 'Подсказка: дробь 6/20 можно сократить на 2. Проверь.' }
+          ],
+          wrongHint: 'Подсказка: дробь 6/20 можно сократить на 2. Проверь.'
+        },
+        's3_final': {
+          text: 'Именно так! 3/10 или 0.3. Ты блестяще справился с задачей на вероятность без возвращения. Это частая ловушка в ЕГЭ, но ты её избежал!',
+          choices: [
+            { label: 'Вернуться к выбору задач', nextStepId: 'END', isCorrect: true }
           ]
-        },
-        {
-          // Шаг 3 (Финал)
-          sender: 'ai',
-          text: 'Блестяще! 🎉 Ты сам пришел к правильному ответу, потому что понял логику, а не просто запомнил правило.<br><br>В полной версии я бы сразу дал тебе 3 аналогичные задачи для закрепления этого навыка!'
-        },
-        {
-          isFinal: true
         }
-      ],
-      // Заглушки для других задач (можно расширить по аналогии)
-      derivative: [{ sender: 'ai', text: 'Демо для этой задачи в разработке. Попробуйте "Метод интервалов"!' }],
-      text: [{ sender: 'ai', text: 'Демо для этой задачи в разработке. Попробуйте "Метод интервалов"!' }]
-    };
+      };
 
-    // Подсказки для неправильных ответов
-    const hints = {
-      hint_roots: { sender: 'ai', text: 'Ничего страшного! Чтобы найти корень числителя, приравняй (x - 2) к нулю. А для знаменателя приравняй (x + 3) к нулю. Попробуй еще раз!', next: 0 },
-      hint_sign: { sender: 'ai', text: 'Давай посчитаем вместе: (0 - 2) = -2. (0 + 3) = 3. Делим -2 на 3. Минус на плюс дает...?', next: 1 },
-      hint_final: { sender: 'ai', text: 'Почти! Но мы ищем, где выражение <b>больше</b> нуля (положительное). Посмотри на крайние интервалы.', next: 2 }
-    };
+      // Состояние приложения
+      let currentStepId = null;
+      let currentTaskId = null;
+      let isRendering = false;
 
-    let currentScenario = [];
-    let currentStep = 0;
+      // DOM элементы
+      const startScreen = document.getElementById('start-screen');
+      const chatScreen = document.getElementById('chat-screen');
+      const chatMessages = document.getElementById('chat-messages');
+      const choicePanel = document.getElementById('choice-panel');
+      const btnBack = document.getElementById('btn-back');
 
-    function startDemo(type) {
-      document.getElementById('task-selection').style.display = 'none';
-      document.getElementById('chat-interface').style.display = 'flex';
-      currentScenario = scenarios[type];
-      currentStep = 0;
-      processStep();
-    }
-
-    function processStep() {
-      const step = currentScenario[currentStep];
-      
-      if (step.isFinal) {
-        showFinalScreen();
-        return;
-      }
-
-      if (step.sender) {
-        showTyping();
-        setTimeout(() => {
-          hideTyping();
-          addMessage(step.text, step.sender);
-          if (step.choices) {
-            showChoices(step.choices);
-          } else {
-            // Если это ответ на подсказку, переходим к следующему шагу
-            if (step.next !== undefined) {
-              currentStep = step.next;
-              setTimeout(processStep, 1000);
-            }
-          }
-        }, 1200); // Имитация раздумий ИИ
-      }
-    }
-
-    function addMessage(text, sender) {
-      const chatWindow = document.getElementById('chat-window');
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `message ${sender}`;
-      msgDiv.innerHTML = text;
-      // Вставляем перед индикатором печати
-      chatWindow.insertBefore(msgDiv, document.getElementById('typing'));
-      chatWindow.scrollTop = chatWindow.scrollHeight;
-    }
-
-    function showTyping() {
-      document.getElementById('typing').style.display = 'flex';
-      document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-    }
-
-    function hideTyping() {
-      document.getElementById('typing').style.display = 'none';
-    }
-
-    function showChoices(choices) {
-      const panel = document.getElementById('choices-panel');
-      panel.innerHTML = '';
-      choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.textContent = choice.text;
-        btn.onclick = () => handleChoice(choice);
-        panel.appendChild(btn);
+      // Кнопки задач
+      document.querySelectorAll('.task-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const taskId = card.getAttribute('data-task');
+          startChat(taskId);
+        });
       });
-    }
 
-    function handleChoice(choice) {
-      // Добавляем выбор пользователя в чат
-      addMessage(choice.text, 'user');
-      document.getElementById('choices-panel').innerHTML = ''; // Очищаем кнопки
-      
-      if (typeof choice.next === 'number') {
-        currentStep = choice.next;
-      } else {
-        // Это подсказка
-        const hint = hints[choice.next];
-        currentStep = currentScenario.length; // Временная метка, чтобы вставить подсказку
-        currentScenario.splice(currentStep, 0, hint);
+      // Кнопка "Назад к задачам"
+      btnBack.addEventListener('click', () => {
+        resetToStart();
+      });
+
+      // Функция запуска чата
+      function startChat(taskId) {
+        currentTaskId = taskId;
+        startScreen.classList.add('hidden');
+        chatScreen.classList.remove('hidden');
+        chatMessages.innerHTML = '';
+        choicePanel.innerHTML = '';
+        
+        // Определяем стартовый шаг в зависимости от задачи
+        let startStep = '';
+        if (taskId === '1') {
+          startStep = 's1_step1';
+        } else if (taskId === '2') {
+          startStep = 's2_step1';
+        } else if (taskId === '3') {
+          startStep = 's3_step1';
+        }
+        
+        currentStepId = startStep;
+        renderStep(currentStepId, true); // true - первый шаг
       }
-      
-      setTimeout(processStep, 500);
-    }
 
-    function showFinalScreen() {
-      const panel = document.getElementById('choices-panel');
-      panel.innerHTML = `
-        <div class="final-screen">
-          <h2>Демо завершено! 🎓</h2>
-          <p>В полной версии МатАИ вы получите доступ к 1000+ задач, персональному плану подготовки и еженедельным отчетам для родителей.</p>
-          <a href="index.html#pricing" class="btn-cta">Оформить подписку за 5 000 ₽/мес</a>
-          <br><br>
-          <a href="index.html" style="color: var(--text-secondary); font-size: 0.9rem;">← Вернуться на главную страницу</a>
-        </div>
-      `;
-    }
+      // Функция рендеринга шага
+      function renderStep(stepId, isInitial = false) {
+        if (isRendering) return;
+        isRendering = true;
+
+        const step = scenarios[stepId];
+        if (!step) return;
+
+        // Показываем индикатор "печатает..."
+        showTypingIndicator();
+
+        // Через 1 секунду добавляем сообщение ИИ и кнопки
+        setTimeout(() => {
+          removeTypingIndicator();
+          addMessage('ai', step.text);
+          
+          // Очищаем и рендерим кнопки
+          choicePanel.innerHTML = '';
+          if (step.choices) {
+            step.choices.forEach(choice => {
+              const btn = document.createElement('button');
+              btn.className = 'choice-btn';
+              btn.textContent = choice.label;
+              btn.addEventListener('click', () => handleChoice(stepId, choice));
+              choicePanel.appendChild(btn);
+            });
+          }
+          
+          scrollChatToBottom();
+          isRendering = false;
+        }, 1000);
+      }
+
+      // Обработка выбора
+      function handleChoice(stepId, choice) {
+        if (isRendering) return;
+        
+        // Добавляем сообщение пользователя
+        addMessage('user', choice.label);
+        
+        // Если выбор неправильный
+        if (choice.isCorrect === false) {
+          const step = scenarios[stepId];
+          const hint = choice.hint || step.wrongHint || 'Не совсем, давай подумаем еще раз.';
+          
+          // Показываем индикатор и через 1 сек сообщение с подсказкой, затем снова рендерим те же кнопки
+          showTypingIndicator();
+          setTimeout(() => {
+            removeTypingIndicator();
+            addMessage('ai', 'Не совсем, давай подумаем еще раз. ' + hint);
+            
+            // Снова рендерим кнопки для этого же шага
+            choicePanel.innerHTML = '';
+            const stepData = scenarios[stepId];
+            stepData.choices.forEach(choice => {
+              const btn = document.createElement('button');
+              btn.className = 'choice-btn';
+              btn.textContent = choice.label;
+              btn.addEventListener('click', () => handleChoice(stepId, choice));
+              choicePanel.appendChild(btn);
+            });
+            
+            scrollChatToBottom();
+          }, 1000);
+          return;
+        }
+        
+        // Если правильный и есть nextStepId
+        if (choice.nextStepId) {
+          if (choice.nextStepId === 'END') {
+            // Возврат к стартовому экрану
+            setTimeout(() => {
+              resetToStart();
+            }, 500);
+            return;
+          }
+          
+          // Переходим к следующему шагу
+          currentStepId = choice.nextStepId;
+          renderStep(currentStepId);
+        }
+      }
+
+      // Добавление сообщения
+      function addMessage(sender, text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.textContent = text;
+        messageDiv.appendChild(bubble);
+        chatMessages.appendChild(messageDiv);
+        scrollChatToBottom();
+      }
+
+      // Показ индикатора "печатает..."
+      function showTypingIndicator() {
+        removeTypingIndicator();
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        for (let i = 0; i < 3; i++) {
+          const span = document.createElement('span');
+          typingDiv.appendChild(span);
+        }
+        chatMessages.appendChild(typingDiv);
+        scrollChatToBottom();
+      }
+
+      // Удаление индикатора "печатает..."
+      function removeTypingIndicator() {
+        const typing = document.getElementById('typing-indicator');
+        if (typing) {
+          typing.remove();
+        }
+      }
+
+      // Прокрутка чата вниз
+      function scrollChatToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Возврат на стартовый экран
+      function resetToStart() {
+        chatScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        chatMessages.innerHTML = '';
+        choicePanel.innerHTML = '';
+        currentStepId = null;
+        currentTaskId = null;
+        isRendering = false;
+      }
+
+      // Инициализация
+      // Обработчик нажатия на кнопку "Вернуться к выбору задач" в финальных шагах
+      // Уже обрабатывается через nextStepId 'END'
+
+    })();
   </script>
 </body>
 </html>
