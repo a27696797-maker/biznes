@@ -46,21 +46,24 @@
 
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(15px);
       transition: all 0.6s cubic-bezier(0.5, 0, 0, 1);
     }
-    .reveal.active { opacity: 1; transform: translateY(0); }
+    .reveal.active { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
 
     /* --- Header --- */
     .header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-color);
-      padding: 16px 24px;
+      padding: 12px 24px; /* Уменьшен отступ */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -83,7 +86,7 @@
       color: var(--text-secondary);
       font-weight: 600;
       font-size: 0.9rem;
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--border-color);
       background: white;
@@ -95,74 +98,84 @@
       border-color: var(--primary);
     }
 
-         .main-container {
+    /* --- Main Container (ИСПРАВЛЕНИЕ: верхний отступ 0) --- */
+    .main-container {
       flex: 1;
       max-width: 1140px;
       width: 100%;
       margin: 0 auto;
-      padding: 8px 24px 24px 24px; /* <-- Верхний отступ уменьшен до минимума (8px) */
+      padding: 0 24px 32px 24px; /* Верхний отступ убран полностью */
       display: flex;
       flex-direction: column;
     }
 
-    /* --- Intro Section: Честное объяснение --- */
+    /* --- Intro Section --- */
     .intro-section {
       text-align: center;
-      margin-bottom: 32px; /* <-- Уменьшили с 60px до 32px */
+      margin-top: 0; /* Принудительно 0 */
+      margin-bottom: 24px; /* Минимальный отступ до задач */
     }
     .intro-section h1 {
-      font-size: 2.25rem;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
       font-weight: 800;
       letter-spacing: -0.02em;
-      margin-bottom: 12px; /* <-- Уменьшили с 16px до 12px */
+      margin-top: 0;
+      margin-bottom: 8px;
       color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     .intro-section .subtitle {
       color: var(--text-secondary);
-      font-size: 1.125rem;
-      margin-bottom: 24px; /* <-- Уменьшили с 32px до 24px */
-      max-width: 700px;
+      font-size: 1.05rem;
+      margin-bottom: 16px;
+      max-width: 650px;
       margin-left: auto;
       margin-right: auto;
+      line-height: 1.5;
     }
     .intro-facts {
       display: flex;
       justify-content: center;
-      gap: 24px;
-      margin-bottom: 0; /* <-- УБРАЛИ нижний отступ полностью, чтобы прижать к задачам */
+      gap: 16px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
     }
     .intro-fact {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: white;
-      padding: 16px 24px;
-      border-radius: 12px;
+      padding: 12px 18px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
     }
     .intro-fact-icon {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       background: var(--primary-light);
       color: var(--primary-dark);
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      flex-shrink: 0;
     }
-    .intro-fact-text {
-      text-align: left;
-    }
+    .intro-fact-text { text-align: left; }
     .intro-fact-text h4 {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
     .intro-fact-text p {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       margin: 0;
     }
@@ -172,21 +185,22 @@
     .legend {
       display: flex;
       justify-content: center;
-      gap: 24px;
-      margin-bottom: 32px;
-      font-size: 0.9rem;
+      gap: 20px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-secondary);
     }
-    .legend-item { display: flex; align-items: center; gap: 8px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
     .legend-dot.ege { background: var(--ege-color); }
     .legend-dot.oge { background: var(--oge-color); }
 
     .task-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
+      gap: 20px;
       text-align: left;
     }
     .task-card-img {
@@ -202,13 +216,13 @@
       cursor: pointer;
     }
     .task-card-img:hover {
-      transform: translateY(-8px);
+      transform: translateY(-6px);
       box-shadow: var(--shadow-lg);
-      border-color: transparent;
+      border-color: var(--primary);
     }
     .task-image-wrapper {
       position: relative;
-      height: 180px;
+      height: 160px;
       overflow: hidden;
     }
     .task-image-wrapper::after {
@@ -222,7 +236,7 @@
       height: 100%;
       object-fit: cover;
       transition: transform 0.6s ease, filter 0.6s ease;
-      filter: grayscale(60%);
+      filter: grayscale(50%);
     }
     .task-card-img:hover .task-image-wrapper img {
       transform: scale(1.05);
@@ -230,11 +244,11 @@
     }
     .task-badge {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.7rem;
+      top: 10px;
+      right: 10px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.05em;
       color: white;
@@ -243,26 +257,26 @@
     .task-badge.ege { background: var(--ege-color); }
     .task-badge.oge { background: var(--oge-color); }
     .task-content {
-      padding: 28px;
+      padding: 20px;
       flex: 1;
     }
     .task-content h3 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--text-primary);
     }
     .task-content p {
       color: var(--text-secondary);
-      line-height: 1.6;
-      font-size: 0.9rem;
+      line-height: 1.5;
+      font-size: 0.85rem;
     }
 
     /* --- Chat Interface --- */
     #chat-interface {
       display: none;
       flex-direction: column;
-      height: calc(100vh - 100px);
+      height: calc(100vh - 80px);
       max-height: 800px;
       background: white;
       border-radius: var(--radius);
@@ -272,7 +286,7 @@
       animation: fadeIn 0.5s ease-out;
     }
     .chat-header {
-      padding: 16px 24px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--border-color);
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -281,24 +295,24 @@
       gap: 12px;
     }
     .chat-header .avatar {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
     }
     .chat-header .info { display: flex; flex-direction: column; flex: 1; }
-    .chat-header .name { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
-    .chat-header .status { font-size: 0.8rem; color: var(--primary); font-weight: 500; }
+    .chat-header .name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+    .chat-header .status { font-size: 0.75rem; color: var(--primary); font-weight: 500; }
     .chat-header .task-tag {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
       font-weight: 700;
       color: white;
     }
@@ -308,18 +322,18 @@
     .chat-window {
       flex: 1;
       overflow-y: auto;
-      padding: 24px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       background: #fafbfc;
     }
     .message {
       max-width: 85%;
-      padding: 16px 20px;
-      border-radius: 18px;
-      font-size: 0.95rem;
-      line-height: 1.6;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.5;
       animation: slideUp 0.35s ease-out;
       word-wrap: break-word;
     }
@@ -342,11 +356,11 @@
       font-family: 'Courier New', monospace;
       background: var(--primary-light);
       color: #064e3b;
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 10px 14px;
+      border-radius: 6px;
       display: block;
-      margin: 12px 0;
-      font-size: 0.95em;
+      margin: 10px 0;
+      font-size: 0.9em;
       font-weight: 600;
       border: 1px solid rgba(16, 185, 129, 0.2);
     }
@@ -357,51 +371,51 @@
     }
     .praise {
       background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-      border-left: 4px solid var(--oge-color);
-      padding: 16px;
-      border-radius: 8px;
-      margin: 12px 0;
+      border-left: 3px solid var(--oge-color);
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin: 10px 0;
       font-weight: 600;
       color: #92400e;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .typing-indicator {
       align-self: flex-start;
       background: white;
-      padding: 16px 20px;
-      border-radius: 18px;
+      padding: 14px 18px;
+      border-radius: 16px;
       border-bottom-left-radius: 4px;
       display: none;
-      gap: 6px;
+      gap: 5px;
       box-shadow: var(--shadow-sm);
       border: 1px solid var(--border-color);
     }
     .typing-indicator.active { display: flex; }
     .typing-indicator span {
-      width: 8px; height: 8px; background: #9ca3af; border-radius: 50%;
+      width: 7px; height: 7px; background: #9ca3af; border-radius: 50%;
       animation: bounce 1.4s infinite ease-in-out both;
     }
     .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
     .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
     .choices-panel {
-      padding: 20px 24px;
+      padding: 16px 20px;
       border-top: 1px solid var(--border-color);
       background: white;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      min-height: 100px;
+      gap: 10px;
+      min-height: 80px;
     }
     .choice-btn {
-      padding: 14px 20px;
-      border-radius: 12px;
+      padding: 12px 18px;
+      border-radius: 10px;
       border: 1px solid var(--border-color);
       background: white;
       color: var(--text-primary);
       font-weight: 500;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: left;
@@ -412,7 +426,7 @@
       border-color: var(--primary);
       background: var(--primary-light);
       color: var(--primary-dark);
-      transform: translateX(4px);
+      transform: translateX(3px);
       box-shadow: var(--shadow-md);
     }
     .choice-btn.final {
@@ -421,8 +435,8 @@
       border-color: transparent;
       text-align: center;
       font-weight: 600;
-      font-size: 1rem;
-      padding: 16px;
+      font-size: 0.95rem;
+      padding: 14px;
     }
     .choice-btn.final:hover {
       transform: translateY(-2px);
@@ -431,16 +445,17 @@
 
     /* --- Responsive --- */
     @media (max-width: 640px) {
-      .main-container { padding: 20px 16px; }
-      .intro-section h1 { font-size: 1.75rem; }
-      .intro-facts { flex-direction: column; align-items: center; }
+      .main-container { padding: 0 16px 24px 16px; }
+      .intro-section h1 { font-size: 1.6rem; }
+      .intro-facts { flex-direction: column; align-items: stretch; gap: 10px; }
+      .intro-fact { padding: 10px 14px; }
       .task-grid { grid-template-columns: 1fr; }
-      #chat-interface { height: calc(100vh - 80px); border-radius: 0; border-left: none; border-right: none; }
-      .chat-window { padding: 16px; }
-      .message { max-width: 92%; font-size: 0.9rem; padding: 12px 16px; }
-      .choices-panel { padding: 16px; gap: 10px; }
-      .choice-btn { font-size: 0.9rem; padding: 12px 16px; }
-      .header { padding: 12px 16px; }
+      #chat-interface { height: calc(100vh - 70px); border-radius: 0; border-left: none; border-right: none; }
+      .chat-window { padding: 14px; }
+      .message { max-width: 92%; font-size: 0.85rem; padding: 12px 14px; }
+      .choices-panel { padding: 14px; gap: 8px; }
+      .choice-btn { font-size: 0.85rem; padding: 10px 14px; }
+      .header { padding: 10px 16px; }
     }
   </style>
 </head>
@@ -453,10 +468,10 @@
 
   <div class="main-container">
     
-    <!-- Intro Section: Честное объяснение -->
+    <!-- Intro Section -->
     <div class="intro-section reveal">
-      <h1>Попробуйте, как ИИ <span style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">учит думать</span></h1>
-      <p class="subtitle">Выберите любую задачу из банка ЕГЭ или ОГЭ. ИИ не даст готовый ответ — он будет задавать наводящие вопросы, пока вы сами не найдете решение. Это формирует реальное понимание, а не иллюзию знаний.</p>
+      <h1>Попробуйте, как ИИ <span class="gradient-text">учит думать</span></h1>
+      <p class="subtitle">Выберите задачу из банка ЕГЭ или ОГЭ. ИИ не даст готовый ответ — он будет задавать наводящие вопросы, пока вы сами не найдете решение.</p>
       
       <div class="intro-facts">
         <div class="intro-fact">
@@ -484,7 +499,7 @@
     </div>
 
     <!-- Task Selection Screen -->
-    <div id="task-selection">
+    <div id="task-selection" class="reveal delay-1">
       <div class="legend">
         <div class="legend-item"><span class="legend-dot ege"></span> ЕГЭ (11 класс)</div>
         <div class="legend-item"><span class="legend-dot oge"></span> ОГЭ (9 класс)</div>
@@ -513,6 +528,7 @@
       <div class="choices-panel" id="choices-panel"></div>
     </div>
   </div>
+
   <script>
     const taskList = [
       { id: 'intervals', exam: 'ege', title: 'Метод интервалов', desc: 'Рациональные неравенства. Логика знаков.', img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80&auto=format' },
@@ -527,7 +543,6 @@
       { id: 'simple_probability', exam: 'oge', title: 'Простая вероятность', desc: 'Классическая формула вероятности.', img: 'https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?w=800&q=80&auto=format' }
     ];
 
-    // Сценарии диалогов (полный набор из 10 задач)
     const scenarios = {
       intervals: {
         exam: 'ege', start: 'i1',
@@ -649,7 +664,6 @@
     let currentScenarioKey = null;
     let currentStepId = null;
 
-    // Рендер карточек задач
     function renderTaskCards() {
       const grid = document.getElementById('task-grid');
       grid.innerHTML = '';
@@ -670,7 +684,6 @@
         grid.appendChild(card);
       });
       
-      // Запуск анимации для карточек
       setTimeout(() => {
         document.querySelectorAll('.task-card-img').forEach((el, i) => {
           setTimeout(() => el.classList.add('active'), i * 100);
@@ -761,6 +774,18 @@
         chatWindow.scrollTop = chatWindow.scrollHeight;
       }, 50);
     }
+
+    // === ИСПРАВЛЕНИЕ: Добавлен наблюдатель для анимации появления ===
+    const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -30px 0px" };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // Инициализация
     renderTaskCards();
