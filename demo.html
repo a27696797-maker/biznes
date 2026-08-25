@@ -95,12 +95,12 @@
       border-color: var(--primary);
     }
 
-     .main-container {
+         .main-container {
       flex: 1;
       max-width: 1140px;
       width: 100%;
       margin: 0 auto;
-      padding: 16px 24px; /* <-- Изменили с 40px на 16px сверху */
+      padding: 8px 24px 24px 24px; /* <-- Верхний отступ уменьшен до минимума (8px) */
       display: flex;
       flex-direction: column;
     }
@@ -108,19 +108,19 @@
     /* --- Intro Section: Честное объяснение --- */
     .intro-section {
       text-align: center;
-      margin-bottom: 60px;
+      margin-bottom: 32px; /* <-- Уменьшили с 60px до 32px */
     }
     .intro-section h1 {
       font-size: 2.25rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      margin-bottom: 16px;
+      margin-bottom: 12px; /* <-- Уменьшили с 16px до 12px */
       color: var(--text-primary);
     }
     .intro-section .subtitle {
       color: var(--text-secondary);
       font-size: 1.125rem;
-      margin-bottom: 32px;
+      margin-bottom: 24px; /* <-- Уменьшили с 32px до 24px */
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
@@ -128,8 +128,8 @@
     .intro-facts {
       display: flex;
       justify-content: center;
-      gap: 32px;
-      margin-bottom: 40px;
+      gap: 24px;
+      margin-bottom: 0; /* <-- УБРАЛИ нижний отступ полностью, чтобы прижать к задачам */
       flex-wrap: wrap;
     }
     .intro-fact {
